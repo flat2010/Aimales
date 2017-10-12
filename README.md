@@ -1,8 +1,8 @@
-# date: 2017-10-12
+### date: 2017-10-12
 
-# attention: DO NOT COPY OR USE WITHOUT PERMISSION! 
+### attention: DO NOT COPY OR USE WITHOUT PERMISSION! 
 
-# Aimales
+### Aimales
 Aimales is a integrated paltform contains ML、DL、RL。
 
 #### Software
