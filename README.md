@@ -1,6 +1,8 @@
-### date: 2017-10-12
+### Date: 
+#### 2017-10-12
 
-### Attention: DO NOT COPY OR USE WITHOUT PERMISSION! 
+### Attention: 
+#### DO NOT COPY OR USE WITHOUT PERMISSION! 
 
 ### Aimales
 Aimales is a integrated paltform contains ML、DL、RL。
