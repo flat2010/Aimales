@@ -10,13 +10,10 @@ from json import dumps,load
 def aimalesIndex(request):
     return render(request, 'index.html')
 
-<<<<<<< HEAD
 @login_required
 def nlpTagTools(request):
     return render(request, 'nlp_tag_tools.html')
 
-=======
->>>>>>> 82c87a3c131a95bcda66203a7f21262c5609a8bf
 @csrf_exempt
 def loginIndex(request):
     redirect_url = request.REQUEST.get('/aimales/login', '')
