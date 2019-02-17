@@ -1,3 +1,3 @@
 #!/bin/bash
-cd ~/django/Aimales/
-python manage.py runserver 0.0.0.0:8080 
+cd ~/Aimales/
+python manage.py runserver 0.0.0.0:8888 

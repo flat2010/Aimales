@@ -89,26 +89,45 @@
     display: flex;
   }
 }
-.c0135 {
-  top: -9px;
-  left: -9px;
-  color: #fff;
-  width: 18px;
-  height: 18px;
-  display: block;
-  opacity: 0;
-  position: absolute;
-  font-size: 0.95em;
-  transition: opacity 0.1s ease;
-  background: #444;
-  text-align: center;
-  line-height: 1.1;
-  font-family: sans-serif;
-  border-radius: 50%;
-}
 </style><style type="text/css" data-jss="" data-meta="t, Unthemed, Static">
 
 </style><style type="text/css" data-jss="" data-meta="Component, Themed, Static">
+.c0137 {
+    color: inherit;
+    margin: 0 3px;
+    display: inline;
+    padding: 5px 8px;
+    background: #ffe184;
+    font-weight: bold;
+    line-height: 1;
+    -webkit-box-decoration-break: clone;
+}
+.c3157 {
+    color: #583fcf;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: "Roboto Condensed", "Arial Narrow", sans-serif;
+    margin-left: 8px;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+.c0135 {
+    top: -9px;
+    left: -9px;
+    color: #fff;
+    width: 18px;
+    height: 18px;
+    display: block;
+    opacity: 0;
+    position: absolute;
+    font-size: 0.95em;
+    background: #444;
+    text-align: center;
+    transition: opacity 0.1s ease;
+    font-family: sans-serif;
+    line-height: 1.1;
+    border-radius: 50%;
+}
 .c1181 {
   padding: 0 17.5px 20px 17.5px;
 }
@@ -634,9 +653,6 @@ td {
 .c0134 {
   font-size: 24px;
 }
-.c0135 {
-  font-size: 37.5px;
-}
 <style type="text/css" data-jss="" data-meta="Component, Themed, Static">
 .c2257 {
   color: #583fcf;
@@ -1063,10 +1079,10 @@ td {
             delete_label_child.innerText = "*";
             delete_label_child.setAttribute("class", "c0135");
             label_child.appendChild(delete_label_child);
-            label_child.setAttribute("class", "c2257 c2258");
+            label_child.setAttribute("class", "c3157 c2258");
             newobj.appendChild(label_child);
             console.log(newobj);
-            newobj.setAttribute("class", "c0155 c0151");
+            newobj.setAttribute("class", "c0137 c0151");
             obj.parentNode.appendChild(newobj);
             obj.parentNode.removeChild(obj);
         }

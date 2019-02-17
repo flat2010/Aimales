@@ -8,7 +8,7 @@ from json import dumps,load
 # Create your views here.
 @login_required
 def aimalesIndex(request):
-    return render(request, 'index.html')
+    return render(request, 'aimales_index.html')
 
 @login_required
 def nlpTagTools(request):
