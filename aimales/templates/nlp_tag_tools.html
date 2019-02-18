@@ -669,6 +669,14 @@ td {
 }
 </style>
 </style><style type="text/css" data-jss="" data-meta="Component, Themed, Static">
+.c0147 {
+  padding: 20px;
+  line-height: 2;
+}
+.c2149 {
+  margin: 0 1px;
+  display: inline-block;
+}
 .c0155 {
   width: 100%;
   color: #fff;
@@ -722,16 +730,8 @@ td {
   display: flex;
   text-align: left;
 }
-.c0147 {
-  padding: 20px;
-  line-height: 2;
-}
 .c0148 {
   direction: rtl;
-}
-.c0149 {
-  margin: 0 1px;
-  display: inline-block;
 }
 .c0150 {
   cursor: not-allowed;
@@ -975,38 +975,32 @@ td {
                                         <div tabindex="-1">
                                             <div class="c0156">
                                                 <span>
-                                                    <input hidden="" type="radio" name="default_label" id="default_label" value="ORG" onclick="setchoosed(this);">
-                                                    <label class="c0157 c0158" for="ORG">ORG<span class="c0159">1</span></label>
+                                                    <input hidden="" type="radio" name="default_label"value="ORG">
+                                                    <label  id="default_label" class="c0157 c0158" for="ORG" onclick="highlight(this);">ORG<span class="c0159">1</span></label>
                                                 </span>
                                                 <span>
-                                                    <input hidden="" type="radio" name="label" id="PRODUCT" value="PRODUCT" "setchoosed(this);">
-                                                        <label class="c0157" for="PRODUCT">PRODUCT<span class="c0159">2</span>
+                                                    <input hidden="" type="radio" name="label"value="PRODUCT">
+                                                        <label  id="PRODUCT" class="c0157" for="PRODUCT" onclick="highlight(this);">PRODUCT<span class="c0159">2</span>
                                                         </label>
                                                 </span>
                                                 <span>
-                                                    <input hidden="" type="radio" name="label" id="DATE" value="DATE" onclick="setchoosed(this);">
-                                                        <label class="c0157" for="DATE">DATE<span class="c0159">3</span>
+                                                    <input hidden="" type="radio" name="label" value="DATE">
+                                                        <label id="DATE" class="c0157" for="DATE" onclick="highlight(this);">DATE<span class="c0159">3</span>
                                                         </label>
                                                 </span>
                                                 <span>
-                                                    <input hidden="" type="radio" name="label" id="GPE" value="GPE" onclick="setchoosed(this);">
-                                                        <label class="c0157" for="GPE">GPE<span class="c0159">4</span>
+                                                    <input hidden="" type="radio" name="label" value="GPE">
+                                                        <label id="GPE" class="c0157" for="GPE" onclick="highlight(this);">GPE<span class="c0159">4</span>
                                                         </label>
                                                 </span>
                                                 <span>
-                                                    <input hidden="" type="radio" name="label" id="EVENT" value="EVENT" onclick="setchoosed(this);">
-                                                        <label class="c0157" for="EVENT">EVENT<span class="c0159">5</span>
+                                                    <input hidden="" type="radio" name="label" value="EVENT">
+                                                        <label id="EVENT" class="c0157" for="EVENT" onclick="highlight(this);">EVENT<span class="c0159">5</span>
                                                         </label>
                                                 </span>
                                                 <span>
-                                                    <input hidden="" type="radio" name="label" id="TIME" value="TIME" onclick="setchoosed(this);">
-                                                        <label class="c0157" for="TIME">TIME<span class="c0159">6</span></label>
-                                                </span>
-                                                <span>
-                                                    <input hidden="" type="radio" name="label" id="LOC" value="LOC" onclick="setchoosed(this);"><label class="c0157" for="LOC">LOC<span class="c0159">7</span></label>
-                                                </span>
-                                                <span>
-                                                    <input hidden="" type="radio" name="label" id="PERSON" value="PERSON" onclick="setchoosed(this);"><label class="c0157" for="PERSON">PERSON<span class="c0159">8</span></label>
+                                                    <input hidden="" type="radio" name="label" value="TIME">
+                                                        <label id="TIME" class="c0157" for="TIME" onclick="highlight(this);">TIME<span class="c0159">6</span></label>
                                                 </span>
                                             </div>
                                         </div>
@@ -1014,11 +1008,11 @@ td {
                                     
                                     <div class="prodigy-content c0130 c0129">
                                         <div class="c0147">
-                                            <span class="c0149" id="0" ondblclick="replace(this);">Techies </span>
-                                            <span class="c0149" id="1">Break </span>
-                                            <span class="c0149" id="2">a </span>
-                                            <span class="c0149" id="3">Fashion </span>
-                                            <span class="c0149" id="4">Taboo </span>
+                                            <span class="c2149" id="0" ondblclick="replace(this);">Techies</span>
+                                            <span class="c2149" id="1" ondblclick="replace(this);">Break</span>
+                                            <span class="c2149" id="2" ondblclick="replace(this);">a</span>
+                                            <span class="c2149" id="3" ondblclick="replace(this);">Fashion </span>
+                                            <span class="c2149" id="4" ondblclick="replace(this);">Taboo </span>
                                         </div>
                                     </div>
                                 </div>
@@ -1059,10 +1053,18 @@ td {
         </div>
     </div>
     <script>
-        var choosed = document.getElementById("default_label").value;
-        console.log(choosed);
+        var default_highlight = document.getElementById("default_label")
+        var choosed = default_highlight.previousElementSibling.value;
         function setchoosed(obj){
             choosed = obj.value;
+            console.log(choosed);
+        }
+        
+        function highlight(obj){
+            default_highlight.setAttribute("class", "c0157");
+            default_highlight = obj;
+            default_highlight.setAttribute("class", "c0157 c0158");
+            setchoosed(obj.previousElementSibling);
         }
         
         // add listeners to all the texts
@@ -1083,7 +1085,7 @@ td {
             newobj.appendChild(label_child);
             console.log(newobj);
             newobj.setAttribute("class", "c0137 c0151");
-            obj.parentNode.appendChild(newobj);
+            obj.parentNode.insertBefore(newobj, obj);
             obj.parentNode.removeChild(obj);
         }
         
