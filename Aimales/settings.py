@@ -13,6 +13,11 @@ import os
 import sys
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+# directory to store pcap files
+MEDIA_ROOT = os.path.join(BASE_DIR, 'aimales/')
+# url to access pcap files in browser.
+MEDIA_URL = '/upload/pcap/'
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/

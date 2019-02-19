@@ -919,12 +919,15 @@ td {
                                     <option value="textcat" id="textcat">文本分类</option>
                                 </select></div>
                             <div class="c1188">
-                                <div class="c1195">界面主题</div>
+                                <div class="c1195">数据集选择</div>
                                 <select class="c1196">
                                     <option value="basic" id="basic">Basic</option>
                                     <option value="eighties" id="eighties">Eighties</option>
                                     <option value="spacy" id="spacy">spaCy</option>
                                     <option value="brutalist" id="brutalist">Brutalist</option>
+									{% for dataset in datasets %}
+										<option value="{{dataset}}" id="{{dataset}}">{{dataset}}</option>
+									{% endfor %}
                                 </select>
                             </div>
                         </section>
