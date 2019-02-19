@@ -55,6 +55,11 @@
     --changelog-fix:#f74c4a;
     --changelog-doc:#583fcf
 }
+
+.prodigy-content {
+    display: inline;
+}
+
 .theme-dark{
     --bg:#1a1e24;
     --bg2:#252a33;

@@ -101,10 +101,11 @@
     font-weight: bold;
     line-height: 1;
     -webkit-box-decoration-break: clone;
+    font-size: 20px;
 }
 .c3157 {
     color: #583fcf;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: bold;
     font-family: "Roboto Condensed", "Arial Narrow", sans-serif;
     margin-left: 8px;
@@ -188,6 +189,10 @@
   text-transform: uppercase;
 }
 </style><style type="text/css" data-jss="" data-meta="Component, Themed, Static">
+.c0151:hover .c0135 {
+    opacity: 1;
+}
+
 .c1191 {
   padding: 0 17.5px 20px 17.5px;
 }
@@ -676,6 +681,7 @@ td {
 .c2149 {
   margin: 0 1px;
   display: inline-block;
+  font-size: 20px;
 }
 .c0155 {
   width: 100%;
@@ -858,11 +864,11 @@ td {
   flex-direction: row;
   justify-content: center;
 }
-.c0111 > * {
+<!-- .c0111 > * {
   border-width: 4px 2px 0 2px !important;
   border-style: solid;
   border-color: #fff;
-}
+} -->
 .c0112 {
   cursor: not-allowed;
 }
@@ -1006,19 +1012,20 @@ td {
                                         </div>
                                     </div>
                                     
-                                    <div class="prodigy-content c0130 c0129">
-                                        <div class="c0147">
+                                    <div class="prodigy-content">
+                                        <div class="c0147" id="words">
                                             <span class="c2149" id="0" ondblclick="replace(this);">Techies</span>
                                             <span class="c2149" id="1" ondblclick="replace(this);">Break</span>
                                             <span class="c2149" id="2" ondblclick="replace(this);">a</span>
                                             <span class="c2149" id="3" ondblclick="replace(this);">Fashion </span>
-                                            <span class="c2149" id="4" ondblclick="replace(this);">Taboo </span>
+                                            <span class="c2149" id="4" ondblclick="replace(this);">Taboo</span>
                                         </div>
                                     </div>
                                 </div>
                                 
                                 <div class="c0143 prodigy-meta">
-                                    <span><strong>SOURCE: </strong>The New York Times</span>
+                                    <span><strong>数据集: </strong>HTTP请求</span>
+                                    <span><strong>样本: </strong>qq@chat@image@http</span>
                                 </div>
                             </div>
                         </div>
@@ -1026,24 +1033,24 @@ td {
                     
                     <footer class="c11101">
                         <div class="c0111 c0110">
-                            <button class="c0113 c0114" aria-label="accept (a)" title="标注正确 (a)">
+                            <button class="c0113 c0114" aria-label="accept (a)" onclick="submmit();" title="提交">
                                 <svg aria-hidden="true" fill="currentColor" width="40" height="40" viewBox="0 0 24 24" class="c0118">
                                     <path d="M9 16.172l10.594-10.594 1.406 1.406-12 12-5.578-5.578 1.406-1.406z"></path>
                                 </svg>
                             </button>
-                            <button class="c0113 c0115" aria-label="reject (x)" title="标注错误 (x)">
-                                <svg aria-hidden="true" fill="currentColor" width="40" height="40" viewBox="0 0 24 24" class="c0118">
-                                    <path d="M18.984 6.422l-5.578 5.578 5.578 5.578-1.406 1.406-5.578-5.578-5.578 5.578-1.406-1.406 5.578-5.578-5.578-5.578 1.406-1.406 5.578 5.578 5.578-5.578z"></path>
-                                </svg>
-                            </button>
-                            <button class="c0113 c0116" aria-label="ignore (space)" title="跳过 (space)">
+                            <button class="c0113 c0116" aria-label="ignore (space)" onclick="skip();" title="跳过">
                                 <svg aria-hidden="true" fill="currentColor" width="40" height="40" viewBox="0 0 24 24" class="c0118">
                                     <path d="M12 20.016c4.406 0 8.016-3.609 8.016-8.016 0-1.828-0.609-3.563-1.688-4.922l-11.25 11.25c1.359 1.078 3.094 1.688 4.922 1.688zM3.984 12c0 1.828 0.609 3.563 1.688 4.922l11.25-11.25c-1.359-1.078-3.094-1.688-4.922-1.688-4.406 0-8.016 3.609-8.016 8.016zM12 2.016c5.531 0 9.984 4.453 9.984 9.984s-4.453 9.984-9.984 9.984-9.984-4.453-9.984-9.984 4.453-9.984 9.984-9.984z"></path>
                                 </svg>
                             </button>
-                            <button class="c0113 c0117" aria-label="undo (backspace, del)" title="撤销 (backspace, del)">
+                            <button class="c0113 c0117" aria-label="undo(backspace, del)" onclick="untagall();" title="重置">
                                 <svg aria-hidden="true" fill="currentColor" width="40" height="40" viewBox="0 0 24 24" class="c0118">
                                     <path d="M11.016 9l1.406 1.406-3.609 3.609h9.188v-10.031h2.016v12h-11.203l3.609 3.609-1.406 1.406-6-6z"></path>
+                                </svg>
+                            </button>
+                            <button class="c0113 c0115" aria-label="exit (x)" onclick="exit();" title="退出">
+                                <svg aria-hidden="true" fill="currentColor" width="40" height="40" viewBox="0 0 24 24" class="c0118">
+                                    <path d="M18.984 6.422l-5.578 5.578 5.578 5.578-1.406 1.406-5.578-5.578-5.578 5.578-1.406-1.406 5.578-5.578-5.578-5.578 1.406-1.406 5.578 5.578 5.578-5.578z"></path>
                                 </svg>
                             </button>
                         </div>
@@ -1067,26 +1074,117 @@ td {
             setchoosed(obj.previousElementSibling);
         }
         
-        // add listeners to all the texts
+        function canceltag(obj){
+            var newobj = document.createElement("span");
+            newobj.setAttribute("id", obj.parentNode.id);
+            newobj.setAttribute("class", "c2149");
+            newobj.setAttribute("onclick", "replace(this);");
+            newobj.innerText = obj.previousElementSibling.previousElementSibling.innerText;
+            console.log(obj.parentNode.id);
+            obj.parentNode.parentNode.insertBefore(newobj, obj.parentNode);
+            obj.parentNode.parentNode.removeChild(obj.parentNode);
+        }
+        
+        // 替换需要标注的文本
+        function replace_words(words){
+            $("#words").empty();
+            var newobj = null;
+            for(j=0, len=words.length;j < len;j++){
+                newobj = document.createElement("span");
+                newobj.setAttribute("class", "2149");
+                newobj.setAttribute("id", j);
+                newobj.setAttribute("onclick", "replace(this);")
+                $("#words").appendChild(newobj);
+            }
+        }
+
+        //双击进行标注的操作
         function replace(obj){
+            
             var newobj = document.createElement("mark");
+            newobj.setAttribute("id", obj.id);
             
             var value_child = document.createElement("span");
             value_child.innerText = obj.innerText;
             newobj.appendChild(value_child);
             
-            var label_child = document.createElement("span");
+            var label_child = document.createElement("sup");
             label_child.innerText = choosed;
+            label_child.setAttribute("class", "c3157 c2258");
+            
             var delete_label_child = document.createElement("span");
             delete_label_child.innerText = "*";
             delete_label_child.setAttribute("class", "c0135");
-            label_child.appendChild(delete_label_child);
-            label_child.setAttribute("class", "c3157 c2258");
+            delete_label_child.setAttribute("onclick", "canceltag(this);")
+            
             newobj.appendChild(label_child);
-            console.log(newobj);
+            newobj.appendChild(delete_label_child);
             newobj.setAttribute("class", "c0137 c0151");
             obj.parentNode.insertBefore(newobj, obj);
             obj.parentNode.removeChild(obj);
+        }
+        
+        // 提交标注
+        function submmit(){
+            var data_array = new Array();
+            var wordnodes = document.getElementById("words").children;
+            for(j=0, len=wordnodes.length; j < len;j++){
+                if("MARK" == wordnodes[j].nodeName){
+                    data_array[wordnodes[j].firstChild.innerText] = wordnodes[j].children[1].innerText;
+                }else{
+                    data_array[wordnodes[j].innerText] = null;
+                }
+            }
+            console.log(data_array);
+            
+            $.ajax({
+                type: "POST",
+                url: "/aimales/nlp_manual_tag/dataset_name/data_id",
+                data: data_array,
+                dataType: "json",
+                complete: function(data){
+                   //在这里做些事情，假设返回的json数据里有name这个属性
+                   //有时候可以直接data.name或者data['name']去访问
+                   //但有时候，却要通过var jsonData = eval("("+data.responseText+")");才可以通过jsonData.name访问，而且这种情况下，需要是complete而不是success
+                   alert("提交成功");
+                }
+           });
+        }
+        
+        // 跳过
+        function skip(){
+            $.ajax({
+                type: "GET",
+                url: "/aimales/nlp_manual_tag/dataset_name/data_id",
+                data: "",
+                dataType: "json",
+                complete: function(data){
+                   //在这里做些事情，假设返回的json数据里有name这个属性
+                   //有时候可以直接data.name或者data['name']去访问
+                   //但有时候，却要通过var jsonData = eval("("+data.responseText+")");才可以通过jsonData.name访问，而且这种情况下，需要是complete而不是success
+                   replace_words(null);
+                }
+           });
+        }
+        
+        // 撤销
+        function untagall(){
+            var fathernode = document.getElementById("words");
+            var words = fathernode.children;
+            var newobj = null;
+            var oldobj = null;
+            for(j=words.length - 1; j >= 0;j--){
+                oldobj = words[j];
+                if("MARK" == oldobj.nodeName){
+                    newobj = document.createElement("span");
+                    newobj.setAttribute("class", "c2149");
+                    newobj.setAttribute("id", words[j].id);
+                    newobj.setAttribute("onclick", "replace(this);");
+                    newobj.innerText = oldobj.firstChild.innerText;
+                    fathernode.insertBefore(newobj, oldobj);
+                    fathernode.removeChild(oldobj);
+                }
+            }
         }
         
         window.ga=window.ga||function(){
@@ -1099,6 +1197,7 @@ td {
     
     <script async="" src="/static/js/nlp_tag_tool_analytics.js.download"></script>
     <script src="/static/js/nlp_tag_tool_demo.js.download"></script>
+    <script src="/static/js/jquery.min.js" />
 </body>
 
     <script>
