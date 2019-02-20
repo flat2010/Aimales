@@ -38,15 +38,32 @@
   background: #384451;
 }
 .c1179::-webkit-progress-value {
-  background: #fff;
+  background: #c8f39f;
 }
 .c1179::-webkit-progress-bar {
   background: #384451;
 }
 .c1179::-moz-progress-bar {
-  background: #fff;
+  background: #c8f39f;
 }
 .c1179::-ms-fill {
+  background: #fff;
+}
+.total_progress {
+  width: 100%;
+  height: 10px;
+  background: #384451;
+}
+.total_progress::-webkit-progress-value {
+  background: #7bd7f3;
+}
+.total_progress::-webkit-progress-bar {
+  background: #384451;
+}
+.total_progress::-moz-progress-bar {
+  background: #7bd7f3;
+}
+.total_progress::-ms-fill {
   background: #fff;
 }
 .c1180 {
@@ -224,8 +241,8 @@
 }
 </style><style type="text/css" data-jss="" data-meta="t, Themed, Static">
 .c1159 {
-  flex: 0 0 260px;
-  width: 260px;
+  flex: 0 0 300px;
+  width: 300px;
   height: 100vh;
   min-height: 100vh;
   overflow-y: auto;
@@ -245,7 +262,7 @@
 }
 .c1161 {
   color: #fff;
-  width: 260px;
+  width: 300px;
   z-index: 30;
   transform: translateX(-100%);
   font-size: 14px;
@@ -334,6 +351,15 @@
   z-index: 10;
   position: sticky;
   background: #54606e;
+}
+.history_records {
+    display: flex;
+    text-align: right;
+    line-height: 1.5;
+    justify-content: space-between;
+    color: #fff;
+    font-size: 10px;
+    font-family: "Roboto Condensed", "Arial Narrow", sans-serif;
 }
 @media(min-width: 936px) {
   .c1161 {
@@ -886,33 +912,19 @@ td {
                             <path d="M3 5h18q0.414 0 0.707 0.293t0.293 0.707-0.293 0.707-0.707 0.293h-18q-0.414 0-0.707-0.293t-0.293-0.707 0.293-0.707 0.707-0.293zM3 17h18q0.414 0 0.707 0.293t0.293 0.707-0.293 0.707-0.707 0.293h-18q-0.414 0-0.707-0.293t-0.293-0.707 0.293-0.707 0.707-0.293zM3 11h18q0.414 0 0.707 0.293t0.293 0.707-0.293 0.707-0.707 0.293h-18q-0.414 0-0.707-0.293t-0.293-0.707 0.293-0.707 0.707-0.293z"></path>
                         </svg>
                     </button>
-                    <a href="">
-                        <svg aria-label="Prodigy" viewBox="0 0 540 158" width="100" height="29">
-                            <path d="M70.6 48.6c7 7.3 10.5 17 10.5 29.2s-3.3 22-10.4 29.2c-7 7.3-16 11-27 11-9.4 0-16.8-2.6-21.7-8v44.7H0V39h20.7v8c4.8-6.3 12.4-9.5 23-9.5 11 0 20 3.7 27 11zM22 76v3.6c0 12 7.2 19.8 18.2 19.8 11.2 0 18.7-8 18.7-21.6S51.3 56.2 40 56.2C29.2 56.2 22 64 22 76zM133.8 59.4c-12.6 0-20.5 7-20.5 17.8v39.3h-22V39h21v8.8c4-6.4 11.3-9.6 21.4-9.6v21.2zM209.5 107c-7.6 7.4-17.5 11.2-29.5 11.2s-22-3.8-29.7-11c-7.6-7.6-11.5-17.3-11.5-29.3 0-12.2 4-22 11.5-29.3 7.8-7.3 17.7-11 29.7-11s22 3.7 29.5 11c7.8 7.3 11.7 17 11.7 29.2 0 11.8-4 21.6-11.7 29zM180 56.3c-5.7 0-10.3 2-13.8 5.8s-5.2 9-5.2 15.7c0 6.7 1.8 12 5.2 15.7 3.4 3.8 8 5.7 13.8 5.7s10.3-1.8 13.8-5.6 5.2-9 5.2-15.7c0-6.8-1.8-12-5.2-15.7-3.5-3.8-8-5.8-13.8-5.8zM313 116.5h-20.5v-8c-4.4 5.6-12.7 9.7-23 9.7-11 0-20-3.8-27-11-7-7.5-10.5-17.2-10.5-29.4s3.5-22 10.3-29.2c7-7.3 16-11 27-11 9.7 0 17 2.6 22 8V0H313v116.5zm-58.8-38.7c0 13.6 7.5 21.4 18.7 21.4 10.8 0 18.2-7.3 18.2-19.8V76c0-12.2-7.3-19.8-18.3-19.8-11.3 0-18.8 8-18.8 21.6zM354 13.6c0 3.6-1.2 6.8-3.8 9.3-5 4.8-13.6 4.8-18.6 0C323.2 15.3 330-.3 341 .3c7.3 0 13 6 13 13.2zm-2 103h-22V39h22v77.5zM425 47v-8h20.6v80.4c0 11.2-3.6 20-10.6 26.8-7 6.7-16.6 10-28.5 10-23.4 0-37-11.4-40-29.8l21.8-.8c1 7.6 7.6 12 17.4 12 11.2 0 18-5.8 18-16.6v-11c-5 5.4-12.4 8-21.8 8-11 0-20-3.7-27-11s-10.4-17-10.4-29.2 3.5-22 10.3-29.2c7-7.3 16-11 27-11 10.6 0 18.3 3 23 9.5zM387 78c0 13.6 7.5 21.6 18.7 21.6 11 0 18.3-7.6 18.3-19.8V76c0-12.2-7.3-19.8-18.3-19.8-11.2 0-18.7 8-18.7 21.6zM488.8 154.8H465l19.8-45L454.5 39h24l18 46.2L514 39h24.3l-49.7 115.8z"></path>
-                        </svg>
-                    </a>
-                    <div class="c1177">
-                        <div class="c1178">
-                            <progress class="c1179" max="100" value="0"></progress>
-                            <div class="c1180">0%</div>
-                        </div>
-                    </div>
+                    <h2 style="text-align:center;text-weight:bold;">NLP-Tools</h2>
                 </header>
                 <div class="c1159">
                     <div class="c1161">
                         <header class="c1163">
-                            <a href="">
-                                <svg aria-label="Prodigy" viewBox="0 0 540 158" width="100" height="29">
-                                    <path d="M70.6 48.6c7 7.3 10.5 17 10.5 29.2s-3.3 22-10.4 29.2c-7 7.3-16 11-27 11-9.4 0-16.8-2.6-21.7-8v44.7H0V39h20.7v8c4.8-6.3 12.4-9.5 23-9.5 11 0 20 3.7 27 11zM22 76v3.6c0 12 7.2 19.8 18.2 19.8 11.2 0 18.7-8 18.7-21.6S51.3 56.2 40 56.2C29.2 56.2 22 64 22 76zM133.8 59.4c-12.6 0-20.5 7-20.5 17.8v39.3h-22V39h21v8.8c4-6.4 11.3-9.6 21.4-9.6v21.2zM209.5 107c-7.6 7.4-17.5 11.2-29.5 11.2s-22-3.8-29.7-11c-7.6-7.6-11.5-17.3-11.5-29.3 0-12.2 4-22 11.5-29.3 7.8-7.3 17.7-11 29.7-11s22 3.7 29.5 11c7.8 7.3 11.7 17 11.7 29.2 0 11.8-4 21.6-11.7 29zM180 56.3c-5.7 0-10.3 2-13.8 5.8s-5.2 9-5.2 15.7c0 6.7 1.8 12 5.2 15.7 3.4 3.8 8 5.7 13.8 5.7s10.3-1.8 13.8-5.6 5.2-9 5.2-15.7c0-6.8-1.8-12-5.2-15.7-3.5-3.8-8-5.8-13.8-5.8zM313 116.5h-20.5v-8c-4.4 5.6-12.7 9.7-23 9.7-11 0-20-3.8-27-11-7-7.5-10.5-17.2-10.5-29.4s3.5-22 10.3-29.2c7-7.3 16-11 27-11 9.7 0 17 2.6 22 8V0H313v116.5zm-58.8-38.7c0 13.6 7.5 21.4 18.7 21.4 10.8 0 18.2-7.3 18.2-19.8V76c0-12.2-7.3-19.8-18.3-19.8-11.3 0-18.8 8-18.8 21.6zM354 13.6c0 3.6-1.2 6.8-3.8 9.3-5 4.8-13.6 4.8-18.6 0C323.2 15.3 330-.3 341 .3c7.3 0 13 6 13 13.2zm-2 103h-22V39h22v77.5zM425 47v-8h20.6v80.4c0 11.2-3.6 20-10.6 26.8-7 6.7-16.6 10-28.5 10-23.4 0-37-11.4-40-29.8l21.8-.8c1 7.6 7.6 12 17.4 12 11.2 0 18-5.8 18-16.6v-11c-5 5.4-12.4 8-21.8 8-11 0-20-3.7-27-11s-10.4-17-10.4-29.2 3.5-22 10.3-29.2c7-7.3 16-11 27-11 10.6 0 18.3 3 23 9.5zM387 78c0 13.6 7.5 21.6 18.7 21.6 11 0 18.3-7.6 18.3-19.8V76c0-12.2-7.3-19.8-18.3-19.8-11.2 0-18.7 8-18.7 21.6zM488.8 154.8H465l19.8-45L454.5 39h24l18 46.2L514 39h24.3l-49.7 115.8z"></path>
-                                </svg>
-                            </a>
+                            <h2 style="text-align:center;text-weight:bold;">NLP工具集</h2>
                             <div class="c1164"></div>
                         </header>
                         <section class="c1181">
                             <div class="c1188">
-                                <div class="c1195">工具类型</div>
+                                <div class="c1195">工具选择</div>
                                 <select class="c1196">
-                                    <option value="ner" id="ner">命名识别</option>
+                                    <option value="ner" id="ner">命名识别（自动）</option>
                                     <option value="ner_manual" id="ner_manual">命名识别（手动标注）</option>
                                     <option value="pos_manual" id="pos_manual">词性标注（手动）</option>
                                     <option value="dep" id="dep">依赖分析</option>
@@ -921,13 +933,9 @@ td {
                             <div class="c1188">
                                 <div class="c1195">数据集选择</div>
                                 <select class="c1196">
-                                    <option value="basic" id="basic">Basic</option>
-                                    <option value="eighties" id="eighties">Eighties</option>
-                                    <option value="spacy" id="spacy">spaCy</option>
-                                    <option value="brutalist" id="brutalist">Brutalist</option>
-									{% for dataset in datasets %}
-										<option value="{{dataset}}" id="{{dataset}}">{{dataset}}</option>
-									{% endfor %}
+                                    {% for dataset in datasets %}
+                                        <option value="{{dataset}}" id="{{dataset}}">{{dataset}}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                         </section>
@@ -935,36 +943,70 @@ td {
                         <section class="c1181">
                             <h3 class="c1173">项目信息</h3>
                             <div class="c1188">
-                                <div class="c1195">数据集名称</div>HTTP报文标注
+                                <div class="c1195">样本总数</div>{{sample_count}}
                             </div>
                             <div class="c1188">
-                                <div class="c1195">样本总数</div>3556
+                                <div class="c1195">数据包总数</div>{{pcap_count}}
+                            </div>
+                        </section>
+                        
+                        <section class="c1181">
+                            <h3 class="c1173">样本信息</h3>
+                            <div class="c1188">
+                                <div class="c1195">数据包Md5</div>{{display.pcap_md5}}
                             </div>
                             <div class="c1188">
-                                <div class="c1195">创建日期</div>2018-01-01
+                                <div class="c1195">负载大小</div>{{display.payload_size}}
                             </div>
                             <div class="c1188">
-                                <div class="c1195">更新日期</div>2019-01-25
+                                <div class="c1195">分词总数</div>{{display.word_segmentation_count}}
+                            </div>
+                            <div class="c1188">
+                                <div class="c1195">最后分词日期</div>{{display.last_segmentation_date}}
+                            </div>
+                            <div class="c1188">
+                                <div class="c1195">最后标注日期</div>{{display.last_tag_date}}
+                            </div>
+                            <div class="c1188">
+                                <div class="c1195">样本创建日期</div>{{display.add_date}}
+                            </div>
+                            <div class="c1188">
+                                <div class="c1195">样本更新日期</div>{{display.update_date}}
                             </div>
                         </section>
                         
                         <section class="c1181">
                             <h3 class="c1173">处理进度</h3>
-                            <div class="c1188">
-                                <div class="c1195">当前文本</div>0
+                            <div class="c1188" id="current_sample_progress">
+                                <div class="c1195">当前样本</div>
+                                <div id="current_sample_progress_value">0/{{display.word_segmentation_count}}</div>
                             </div>
-                            <div class="c1188">
-                                <div class="c1195">所有文本</div>0
-                            </div>
-                            <div class="c1178">
+                            <div class="c1178" id="current_progress">
                                 <progress class="c1179" max="100" value="0"></progress>
+                                <div class="c1180">0%</div>
+                            </div>
+                            <div class="c1188" id="global_sample_progress">
+                                <div class="c1195">所有样本</div>
+                                <div id="global_sample_progress_value">0/{{sample_count}}</div>
+                            </div>
+                            <div class="c1178" id="total_progress">
+                                <progress class="total_progress" max="100" value="0"></progress>
                                 <div class="c1180">0%</div>
                             </div>
                         </section>
                         
                         <section class="c1181 c1182">
                             <h3 class="c1173 c1174">历史记录</h3>
-                            <span></span>
+                            <div id="history_records_container">
+                                <div class="history_records" id="history_records">
+                                    <div>样本ID：1, &emsp;数据包名：.</div>
+                                        <span class="succeed_history_record"><svg aria-hidden="true" fill="currentColor" width="18" height="18" viewBox="0 0 24 24"><path d="M9 16.172l10.594-10.594 1.406 1.406-12 12-5.578-5.578 1.406-1.406z"></path></svg></span>
+                                </div>
+                                <div class="history_records" id="history_records">
+                                    <div>样本ID：2, &emsp;数据包名：.</div>
+                                    <span class="failed_history_record"><svg aria-hidden="true" fill="currentColor" width="18" height="18" viewBox="0 0 24 24"><path d="M18.984 6.422l-5.578 5.578 5.578 5.578-1.406 1.406-5.578-5.578-5.578 5.578-1.406-1.406 5.578-5.578-5.578-5.578 1.406-1.406 5.578 5.578 5.578-5.578z"></path></svg></span>
+                                </div>
+                            </div>
                         </section>
                         
                         <footer class="c1172">
@@ -1017,18 +1059,15 @@ td {
                                     
                                     <div class="prodigy-content">
                                         <div class="c0147" id="words">
-                                            <span class="c2149" id="0" ondblclick="replace(this);">Techies</span>
-                                            <span class="c2149" id="1" ondblclick="replace(this);">Break</span>
-                                            <span class="c2149" id="2" ondblclick="replace(this);">a</span>
-                                            <span class="c2149" id="3" ondblclick="replace(this);">Fashion </span>
-                                            <span class="c2149" id="4" ondblclick="replace(this);">Taboo</span>
+                                            {% for word in display.word_segmentation_text %}
+                                                <span class="c2149" id="{{forloop.counter}}" ondblclick="replace(this);">{{word}}</span>
+                                            {% endfor %}
                                         </div>
                                     </div>
                                 </div>
                                 
                                 <div class="c0143 prodigy-meta">
-                                    <span><strong>数据集: </strong>HTTP请求</span>
-                                    <span><strong>样本: </strong>qq@chat@image@http</span>
+                                    <span><strong>样本: </strong>{{display.pcap_name}}</span>
                                 </div>
                             </div>
                         </div>
@@ -1063,6 +1102,15 @@ td {
         </div>
     </div>
     <script>
+        // 最大显示的历史记录数量
+        var max_history_records = 20;
+        
+        // 全局当前已编辑分词数量
+        var global_edit_word_count = 0;
+        
+        // 当前样本已编辑分词数量
+        var current_edit_word_count = 0;
+        
         var default_highlight = document.getElementById("default_label")
         var choosed = default_highlight.previousElementSibling.value;
         function setchoosed(obj){
@@ -1086,6 +1134,9 @@ td {
             console.log(obj.parentNode.id);
             obj.parentNode.parentNode.insertBefore(newobj, obj.parentNode);
             obj.parentNode.parentNode.removeChild(obj.parentNode);
+            
+            current_edit_word_count -= 1;
+            refresh_current_progress_bar();
         }
         
         // 替换需要标注的文本
@@ -1125,6 +1176,35 @@ td {
             newobj.setAttribute("class", "c0137 c0151");
             obj.parentNode.insertBefore(newobj, obj);
             obj.parentNode.removeChild(obj);
+            
+            current_edit_word_count += 1;
+            refresh_current_progress_bar();
+        }
+        
+        // 更新当前样本进度显示
+        function refresh_current_progress_bar(){
+            var current_sample_progress = document.getElementById("current_sample_progress_value");
+            console.log(current_sample_progress.innerText);
+            current_sample_progress.innerText = current_edit_word_count + "/" + current_sample_progress.innerText.split("/")[1];
+            document.getElementById("current_progress").firstChild.value = current_edit_word_count.toString() / parseFloat(current_sample_progress.innerText.split("/")[1]);
+            document.getElementById("current_progress").lastChild.innerText = (current_edit_word_count / parseFloat(current_sample_progress.innerText.split("/")[1])).toString() + "%";
+        }
+        
+        function after_commit(){
+            // 提交成功后，修改界面历史记录
+            var new_record = document.createElement("span");
+            new_record.innerText = "样本ID：" + "， &emsp;数据包名：.";
+            
+            var history_record_container = document.getElementById("history_records")
+            // 超出二十个元素时，先删除前面的，再追加
+            if(history_record_container.children.length >= max_history_records){
+                history_record_container.removeChild(history_record_container.firstChild)
+            }
+            history_record_container.appendChild(new_record);
+            
+            //修改进度显示
+            global_edit_word_count += 1;
+            
         }
         
         // 提交标注
@@ -1150,6 +1230,7 @@ td {
                    //有时候可以直接data.name或者data['name']去访问
                    //但有时候，却要通过var jsonData = eval("("+data.responseText+")");才可以通过jsonData.name访问，而且这种情况下，需要是complete而不是success
                    alert("提交成功");
+                   after_commit();
                 }
            });
         }
