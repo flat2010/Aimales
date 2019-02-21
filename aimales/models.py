@@ -21,10 +21,14 @@ class HttpRequest(models.Model):
     payload_binary = models.BinaryField(blank=True, null=True)
     # 负载大小(单个样本，字节)
     payload_size = models.IntegerField(blank=True, null=True)
+    # 是否已标注
+    is_tagged = models.BooleanField(default=0)
     # 标注结果
     word_tag_text = models.TextField(blank=True, null=True)
     # 标注结果数量
     word_tag_count = models.IntegerField(blank=True, null=True)
+    # 是否已分词
+    is_segmented = models.BooleanField(default=0)
     # 分词结果
     word_segmentation_text = models.TextField(blank=True, null=True)
     # 分词结果数量

@@ -14,4 +14,5 @@ urlpatterns = patterns('',
     url(r'^index.html$', views.aimalesIndex),
     url(r'^loginValidate$', views.loginValidate),
     url(r'^nlp_tag_tools.html$', views.nlpTagTools),
+    url(r'^datasets/(?P<dataset>\S+)/(?P<flag>\S+)/(?P<flag_value>\S+)$', views.fetchDataset),
 )

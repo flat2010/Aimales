@@ -129,7 +129,7 @@
     text-transform: uppercase;
     vertical-align: middle;
 }
-.c0135 {
+.delete_button {
     top: -9px;
     left: -9px;
     color: #fff;
@@ -146,10 +146,10 @@
     line-height: 1.1;
     border-radius: 50%;
 }
-.c1181 {
+.left_side_main_menu_container {
   padding: 0 17.5px 20px 17.5px;
 }
-.c1181:not(:last-child) {
+.left_side_main_menu_container:not(:last-child) {
   border-bottom: 1px solid #384451;
   margin-bottom: 17.5px;
 }
@@ -188,7 +188,7 @@
   min-height: 150px;
   overflow-y: auto;
 }
-.c1188 {
+.left_side_sub_menu_container {
   display: flex;
   text-align: right;
   line-height: 2.0;
@@ -206,7 +206,7 @@
   text-transform: uppercase;
 }
 </style><style type="text/css" data-jss="" data-meta="Component, Themed, Static">
-.c0151:hover .c0135 {
+.c0151:hover .delete_button {
     opacity: 1;
 }
 
@@ -231,9 +231,9 @@
 .c1194 {
   cursor: pointer;
 }
-.c1195 {
+.left_side_sub_menu {
   color: #b9b9b9;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: bold;
   font-family: "Roboto Condensed", "Arial Narrow", sans-serif;
   margin-right: 10px;
@@ -327,17 +327,18 @@
   padding-right: 10px;
   text-overflow: ellipsis;
 }
-.c1172 {
+.copyright {
   padding: 0 17.5px 17.5px;
-  font-size: 11px;
+  font-size: 12px;
+  color: #66ffff;
 }
-.c1172 > *:not(:first-child) {
+.copyright > *:not(:first-child) {
   margin-left: 10px;
 }
-.c1172 a {
+.copyright a {
   text-decoration: none;
 }
-.c1173 {
+.left_side_main_menu {
   color: #fff;
   font-size: 16px;
   font-weight: bold;
@@ -920,19 +921,19 @@ td {
                             <h2 style="text-align:center;text-weight:bold;">NLP工具集</h2>
                             <div class="c1164"></div>
                         </header>
-                        <section class="c1181">
-                            <div class="c1188">
-                                <div class="c1195">工具选择</div>
-                                <select class="c1196">
+                        <section class="left_side_main_menu_container">
+                            <div class="left_side_sub_menu_container">
+                                <div class="left_side_sub_menu">工具选择</div>
+                                <select class="c1196" id="tools_select">
                                     <option value="ner" id="ner">命名识别（自动）</option>
                                     <option value="ner_manual" id="ner_manual">命名识别（手动标注）</option>
                                     <option value="pos_manual" id="pos_manual">词性标注（手动）</option>
                                     <option value="dep" id="dep">依赖分析</option>
                                     <option value="textcat" id="textcat">文本分类</option>
                                 </select></div>
-                            <div class="c1188">
-                                <div class="c1195">数据集选择</div>
-                                <select class="c1196">
+                            <div class="left_side_sub_menu_container">
+                                <div class="left_side_sub_menu">数据集选择</div>
+                                <select class="c1196" id="datasets_select">
                                     {% for dataset in datasets %}
                                         <option value="{{dataset}}" id="{{dataset}}">{{dataset}}</option>
                                     {% endfor %}
@@ -940,53 +941,60 @@ td {
                             </div>
                         </section>
 
-                        <section class="c1181">
-                            <h3 class="c1173">项目信息</h3>
-                            <div class="c1188">
-                                <div class="c1195">样本总数</div>{{sample_count}}
+                        <section class="left_side_main_menu_container">
+                            <h3 class="left_side_main_menu">项目信息</h3>
+                            <div class="left_side_sub_menu_container">
+                                <div class="left_side_sub_menu">样本总数</div>{{sample_count}}
                             </div>
-                            <div class="c1188">
-                                <div class="c1195">数据包总数</div>{{pcap_count}}
-                            </div>
-                        </section>
-                        
-                        <section class="c1181">
-                            <h3 class="c1173">样本信息</h3>
-                            <div class="c1188">
-                                <div class="c1195">数据包Md5</div>{{display.pcap_md5}}
-                            </div>
-                            <div class="c1188">
-                                <div class="c1195">负载大小</div>{{display.payload_size}}
-                            </div>
-                            <div class="c1188">
-                                <div class="c1195">分词总数</div>{{display.word_segmentation_count}}
-                            </div>
-                            <div class="c1188">
-                                <div class="c1195">最后分词日期</div>{{display.last_segmentation_date}}
-                            </div>
-                            <div class="c1188">
-                                <div class="c1195">最后标注日期</div>{{display.last_tag_date}}
-                            </div>
-                            <div class="c1188">
-                                <div class="c1195">样本创建日期</div>{{display.add_date}}
-                            </div>
-                            <div class="c1188">
-                                <div class="c1195">样本更新日期</div>{{display.update_date}}
+                            <div class="left_side_sub_menu_container">
+                                <div class="left_side_sub_menu">数据包总数</div>{{pcap_count}}
                             </div>
                         </section>
                         
-                        <section class="c1181">
-                            <h3 class="c1173">处理进度</h3>
-                            <div class="c1188" id="current_sample_progress">
-                                <div class="c1195">当前样本</div>
+                        <section class="left_side_main_menu_container">
+                            <h3 class="left_side_main_menu">样本信息</h3>
+                            <div class="left_side_sub_menu_container">
+                                <div class="left_side_sub_menu">数据包Md5</div>
+                                <div id="pcap_md5">{{display.pcap_md5}}</div>
+                            </div>
+                            <div class="left_side_sub_menu_container">
+                                <div class="left_side_sub_menu">负载大小</div>
+                                 <div id="payload_size">{{display.payload_size}}</div>
+                            </div>
+                            <div class="left_side_sub_menu_container">
+                                <div class="left_side_sub_menu">分词总数</div>
+                                <div id="word_segmentation_count">{{display.word_segmentation_count}}</div>
+                            </div>
+                            <div class="left_side_sub_menu_container">
+                                <div class="left_side_sub_menu">最后分词日期</div>
+                                <div id="last_segmentation_date">{{display.last_segmentation_date}}</div>
+                            </div>
+                            <div class="left_side_sub_menu_container">
+                                <div class="left_side_sub_menu">最后标注日期</div>
+                                <div id="last_tag_date">{{display.last_tag_date}}</div>
+                            </div>
+                            <div class="left_side_sub_menu_container">
+                                <div class="left_side_sub_menu">样本创建日期</div>
+                                <div id="add_date">{{display.add_date}}</div>
+                            </div>
+                            <div class="left_side_sub_menu_container">
+                                <div class="left_side_sub_menu">样本更新日期</div>
+                                <div id="update_date">{{display.update_date}}</div>
+                            </div>
+                        </section>
+                        
+                        <section class="left_side_main_menu_container">
+                            <h3 class="left_side_main_menu">处理进度</h3>
+                            <div class="left_side_sub_menu_container" id="current_sample_progress">
+                                <div class="left_side_sub_menu">当前样本</div>
                                 <div id="current_sample_progress_value">0/{{display.word_segmentation_count}}</div>
                             </div>
                             <div class="c1178">
                                 <progress  id="current_progress" class="c1179" max="100" value="0"></progress>
                                 <div  id="current_progress_text" class="c1180">0%</div>
                             </div>
-                            <div class="c1188" id="total_sample_progress">
-                                <div class="c1195">所有样本</div>
+                            <div class="left_side_sub_menu_container" id="total_sample_progress">
+                                <div class="left_side_sub_menu">所有样本</div>
                                 <div id="total_sample_progress_value">0/{{sample_count}}</div>
                             </div>
                             <div class="c1178">
@@ -995,21 +1003,29 @@ td {
                             </div>
                         </section>
                         
-                        <section class="c1181 c1182">
-                            <h3 class="c1173 c1174">历史记录</h3>
+                        <section class="left_side_main_menu_container c1182">
+                            <h3 class="left_side_main_menu c1174">历史记录</h3>
                             <div id="history_records_container">
                                 <div class="history_records" id="history_records">
                                     <div>样本ID：1, &emsp;数据包名：.</div>
-                                        <span class="succeed_history_record"><svg aria-hidden="true" fill="currentColor" width="18" height="18" viewBox="0 0 24 24"><path d="M9 16.172l10.594-10.594 1.406 1.406-12 12-5.578-5.578 1.406-1.406z"></path></svg></span>
+                                    <span class="succeed_history_record">
+                                        <svg aria-hidden="true" fill="currentColor" width="18" height="18" viewbox="0 0 24 24">
+                                            <path d="M9 16.172l10.594-10.594 1.406 1.406-12 12-5.578-5.578 1.406-1.406z"></path>
+                                        </svg>
+                                    </span>
                                 </div>
                                 <div class="history_records" id="history_records">
                                     <div>样本ID：2, &emsp;数据包名：.</div>
-                                    <span class="failed_history_record"><svg aria-hidden="true" fill="currentColor" width="18" height="18" viewBox="0 0 24 24"><path d="M18.984 6.422l-5.578 5.578 5.578 5.578-1.406 1.406-5.578-5.578-5.578 5.578-1.406-1.406 5.578-5.578-5.578-5.578 1.406-1.406 5.578 5.578 5.578-5.578z"></path></svg></span>
+                                    <span class="failed_history_record">
+                                        <svg aria-hidden="true" fill="currentColor" width="18" height="18" viewBox="0 0 24 24">
+                                            <path d="M18.984 6.422l-5.578 5.578 5.578 5.578-1.406 1.406-5.578-5.578-5.578 5.578-1.406-1.406 5.578-5.578-5.578-5.578 1.406-1.406 5.578 5.578 5.578-5.578z"></path>
+                                        </svg>
+                                    </span>
                                 </div>
                             </div>
                         </section>
                         
-                        <footer class="c1172">
+                        <footer class="copyright">
                             <a href="" target="_blank">© 2019 APP AI LAB</a>
                             <a href="" target="_blank">(<strong>Aimales</strong> v1.0)</a>
                         </footer>
@@ -1059,9 +1075,15 @@ td {
                                     
                                     <div class="prodigy-content">
                                         <div class="c0147" id="words">
-                                            {% for word in display.word_segmentation_text %}
-                                                <span class="c2149" id="{{forloop.counter}}" ondblclick="replace(this);">{{word}}</span>
-                                            {% endfor %}
+                                            {% if display.is_tagged %}
+                                                {% for word in display.word_tag_text %}
+                                                    <span class="c2149" id="{{forloop.counter}}" ondblclick="replace(this);">{{word}}</span>
+                                                {% endfor %}
+                                            {% else %}
+                                                {% for word in display.word_segmentation_text %}
+                                                    <span class="c2149" id="{{forloop.counter}}" ondblclick="replace(this);">{{word}}</span>
+                                                {% endfor %}
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
@@ -1103,13 +1125,19 @@ td {
     </div>
     <script>
         // 最大显示的历史记录数量
-        var max_history_records = 20;
+        var max_history_records = 3;
         
-        // 全局当前已编辑分词数量
-        var global_edit_word_count = 0;
+        // 全局当前已编辑样本数量
+        var global_edit_sample_count = 0;
+        
+        // 当前编辑的样本的索引号
+        var global_edit_sample_index = 0;
         
         // 当前样本已编辑分词数量
         var current_edit_word_count = 0;
+        
+        // 第一个数据集的所有数据
+        var datas = {{ records | safe }};
         
         var default_highlight = document.getElementById("default_label")
         var choosed = default_highlight.previousElementSibling.value;
@@ -1117,11 +1145,15 @@ td {
             choosed = obj.value;
         }
         
-        function highlight(obj){
+        function highlight(obj, tag_label=null){
             default_highlight.setAttribute("class", "c0157");
             default_highlight = obj;
             default_highlight.setAttribute("class", "c0157 c0158");
-            setchoosed(obj.previousElementSibling);
+            if(tag_label){
+                choosed = tag_label;
+            }else{
+                setchoosed(obj.previousElementSibling);
+            }
         }
         
         function canceltag(obj){
@@ -1138,16 +1170,39 @@ td {
             refresh_current_progress_bar();
         }
         
+        // 获取当前选中的数据集对象
+        function get_selected_dataset(){
+            var datasets_select = document.getElementById("datasets_select");
+            var index = datasets_select.selectedIndex;
+            return datasets_select.options[index];
+        }
+        
+        // 获取当前选中的工具对象
+        function get_selected_tool(){
+            var tools_select = document.getElementById("tools_select");
+            var index = tools_select.selectedIndex;
+            return tools_select.options[index];
+        }
+        
         // 替换需要标注的文本
-        function replace_words(words){
+        function replace_words(words, is_tagged=false){
             $("#words").empty();
             var newobj = null;
+            var splited_word = null;
             for(j=0, len=words.length;j < len;j++){
                 newobj = document.createElement("span");
                 newobj.setAttribute("class", "2149");
                 newobj.setAttribute("id", j);
-                newobj.setAttribute("onclick", "replace(this);")
-                $("#words").appendChild(newobj);
+                newobj.setAttribute("ondblclick", "replace(this);")
+                if(is_tagged){
+                    splited_word = words[j].split("@");
+                    console.log(splited_word);
+                    newobj.innerHTML = splited_word[0];
+                    if(splited_word.length == 2){
+                        highlight(newobj, splited_word[1]);
+                    }
+                }
+                document.getElementById("words").appendChild(newobj);
             }
         }
 
@@ -1166,7 +1221,7 @@ td {
             
             var delete_label_child = document.createElement("span");
             delete_label_child.innerText = "*";
-            delete_label_child.setAttribute("class", "c0135");
+            delete_label_child.setAttribute("class", "delete_button");
             delete_label_child.setAttribute("onclick", "canceltag(this);")
             
             newobj.appendChild(label_child);
@@ -1184,55 +1239,86 @@ td {
             var current_sample_progress = document.getElementById("current_sample_progress_value");
             current_sample_progress.innerText = current_edit_word_count + "/" + current_sample_progress.innerText.split("/")[1];
             console.log(document.getElementById("current_progress").innerText);
-			document.getElementById("current_progress").value = current_edit_word_count*100 / parseFloat(current_sample_progress.innerText.split("/")[1]);
+			document.getElementById("current_progress").value = current_edit_word_count*100 / parseInt(current_sample_progress.innerText.split("/")[1]);
             document.getElementById("current_progress_text").innerText = (current_edit_word_count*100 / parseFloat(current_sample_progress.innerText.split("/")[1])).toString() + "%";
         }
 		
 		// 更新总样本处理进度显示
         function refresh_global_progress_bar(){
             var total_sample_progress = document.getElementById("total_sample_progress_value");
-            total_sample_progress.innerText = global_edit_word_count + "/" + total_sample_progress.innerText.split("/")[1];
+            total_sample_progress.innerText = global_edit_sample_count + "/" + total_sample_progress.innerText.split("/")[1];
             console.log(document.getElementById("current_progress").innerText);
-			document.getElementById("total_progress").value = global_edit_word_count*100 / parseFloat(total_sample_progress.innerText.split("/")[1]);
-            document.getElementById("total_progress_text").innerText = (global_edit_word_count*100 / parseFloat(total_sample_progress.innerText.split("/")[1])).toString() + "%";
+			document.getElementById("total_progress").value = global_edit_sample_count*100 / parseFloat(total_sample_progress.innerText.split("/")[1]);
+            document.getElementById("total_progress_text").innerText = (global_edit_sample_count*100 / parseFloat(total_sample_progress.innerText.split("/")[1])).toString() + "%";
         }
         
-		function add_history_record(){
-            // 提交成功后，修改界面历史记录
+		function add_history_record(is_failed){
+            // 提交后，修改界面历史记录
             var new_record = document.createElement("div");
 			new_record.setAttribute("class", "history_records");
 			new_record.setAttribute("id", "history_records");
 			var first_child = document.createElement("div");
-			first_child.innerText = "样本ID：2, 数据包名：.";
+			first_child.innerHTML = "样本ID：" + global_edit_sample_count.toString() + " , &emsp;数据包名：.";
 			var second_child = document.createElement("span");
 			second_child.setAttribute("class", "succeed_history_record");
-            var svg_child = document.createElement("svg");
+            if(!is_failed){
+                second_child.innerHTML = '<svg aria-hidden="true" fill="currentColor" width="18" height="18" viewbox="0 0 24 24"><path d="M9 16.172l10.594-10.594 1.406 1.406-12 12-5.578-5.578 1.406-1.406z"></path></svg>';
+            }else{
+                second_child.innerHTML = '<svg aria-hidden="true" fill="currentColor" width="18" height="18" viewBox="0 0 24 24"><path d="M18.984 6.422l-5.578 5.578 5.578 5.578-1.406 1.406-5.578-5.578-5.578 5.578-1.406-1.406 5.578-5.578-5.578-5.578 1.406-1.406 5.578 5.578 5.578-5.578z"></path></svg>';
+            }
+            /*var svg_child = document.createElement("svg");
 			svg_child.setAttribute("aria-hidden", "true");
 			svg_child.setAttribute("fill", "currentColor");
 			svg_child.setAttribute("width", "18");
 			svg_child.setAttribute("height", "18");
 			svg_child.setAttribute("viewBox", "0 0 24 24");
-			var path_child = document.createElement("path");
-			path_child.setAttribute("d", "M18.984 6.422l-5.578 5.578 5.578 5.578-1.406 1.406-5.578-5.578-5.578 5.578-1.406-1.406 5.578-5.578-5.578-5.578 1.406-1.406 5.578 5.578 5.578-5.578z");
-			svg_child.appendChild(path_child);
-			second_child.appendChild(svg_child);
+            svg_child.innerHTML = '<path d="M9 16.172l10.594-10.594 1.406 1.406-12 12-5.578-5.578 1.406-1.406z"></path>';
+			second_child.appendChild(svg_child);*/
 			new_record.appendChild(first_child);
 			new_record.appendChild(second_child);
             
-            var history_record_container = document.getElementById("history_records_container")
-            // 超出二十个元素时，先删除前面的，再追加
-            if(history_record_container.children.length >= max_history_records){
-                history_record_container.removeChild(history_record_container.firstChild)
+            var history_record_container = document.getElementById("history_records_container");
+            // 超出指定数量个元素时，先删除前面的，再追加
+            if(history_record_container.children.length > max_history_records){
+                // 这里removeChild(history_record_container.firstChild)不生效
+                history_record_container.removeChild(history_record_container.children[0]);
             }
             history_record_container.appendChild(new_record);
 		}
 		
-        function after_commit(){
-			add_history_record();
+        function after_commit(commit_result){
+			add_history_record(commit_result);
             
             // 修改当前样本进度
-            global_edit_word_count += 1;   
+            global_edit_sample_count += 1;
+            global_edit_sample_index += 1;
 			refresh_global_progress_bar();			
+        }
+        
+        // 点击跳过时不刷新页面显示下一个样本
+        function redisplay_sample_without_fresh(pop_first){
+            document.getElementById("pcap_md5").innerHTML = datas[global_edit_sample_index]["pcap_md5"];
+            document.getElementById("payload_size").innerHTML = datas[global_edit_sample_index]["payload_size"];
+            document.getElementById("word_segmentation_count").innerHTML = datas[global_edit_sample_index]["word_segmentation_count"];
+            document.getElementById("last_segmentation_date").innerHTML = datas[global_edit_sample_index]["last_segmentation_date"];
+            document.getElementById("last_tag_date").innerHTML = datas[global_edit_sample_index]["last_tag_date"];
+            document.getElementById("add_date").innerHTML = datas[global_edit_sample_index]["add_date"];
+            document.getElementById("update_date").innerHTML = datas[global_edit_sample_index]["update_date"];
+            
+            document.getElementById("current_sample_progress_value").innerHTML = "0/" + datas[global_edit_sample_index]["word_segmentation_count"].toString();
+            document.getElementById("current_progress").value = 0;
+            document.getElementById("current_progress_text").innerText = "0%";
+
+            if(datas[global_edit_sample_index]["is_tagged"]){
+                replace_words(datas[global_edit_sample_index]["word_tag_text"].split(" "), true);
+            }else{
+                replace_words(datas[global_edit_sample_index]["word_segmentation_text"].split(" "), false);
+            }
+
+            // 未遍历完时，不删除第一个样本
+            if(pop_first){
+                datas = datas.shift();
+            }
         }
         
         // 提交标注
@@ -1252,30 +1338,57 @@ td {
                 url: "/aimales/nlp_manual_tag/dataset_name/data_id",
                 data: data_array,
                 dataType: "json",
-                complete: function(data){
+                complete: function(data, status){
                    //在这里做些事情，假设返回的json数据里有name这个属性
                    //有时候可以直接data.name或者data['name']去访问
                    //但有时候，却要通过var jsonData = eval("("+data.responseText+")");才可以通过jsonData.name访问，而且这种情况下，需要是complete而不是success
                    alert("提交成功");
-                   after_commit();
+                   if(status == 'error'){
+                       status = true;
+                   }else{
+                       status = false;
+                   }
+                   after_commit(status);
                 }
            });
+           
+           if_runout();
+        }
+        
+        // 该数据集所有样本遍历完之后
+        function if_runout(){
+            if(global_edit_sample_index >= datas.length){
+                global_edit_sample_index = 0;
+                if(confirm("已到数据记录最后，是否继续标注尚未标注样本？")){
+                    $.ajax({
+                        type: "GET",
+                        url: "/aimales/datasets/" + get_selected_dataset().innerText + "/is_tagged/" + "0",
+                        dataType: "json",
+                        complete: function(data, status){
+                            datas = JSON.parse(data.responseText);
+                            if(status == 'error'){
+                                alert("刷新数据错误，请稍后重试。");
+                            }else{
+                                if(datas.length){
+                                    redisplay_sample_without_fresh(true);
+                                }else{
+                                    alert("所有样本均已标注完毕！");
+                                }
+                            }
+                        }
+                   });
+                }
+            }else{
+                redisplay_sample_without_fresh(false);
+            }
+        
         }
         
         // 跳过
         function skip(){
-            $.ajax({
-                type: "GET",
-                url: "/aimales/nlp_manual_tag/dataset_name/data_id",
-                data: "",
-                dataType: "json",
-                complete: function(data){
-                   //在这里做些事情，假设返回的json数据里有name这个属性
-                   //有时候可以直接data.name或者data['name']去访问
-                   //但有时候，却要通过var jsonData = eval("("+data.responseText+")");才可以通过jsonData.name访问，而且这种情况下，需要是complete而不是success
-                   replace_words(null);
-                }
-           });
+            // 为了判断是否已到数据末尾
+            global_edit_sample_index += 1;
+            if_runout();
         }
         
         // 撤销
