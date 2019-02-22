@@ -706,7 +706,7 @@ td {
   line-height: 2;
 }
 .c2149 {
-  margin: 0 1px;
+  margin: 0 3px;
   display: inline-block;
   font-size: 20px;
 }
@@ -954,12 +954,20 @@ td {
                         <section class="left_side_main_menu_container">
                             <h3 class="left_side_main_menu">样本信息</h3>
                             <div class="left_side_sub_menu_container">
+                                <div class="left_side_sub_menu">样本记录ID</div>
+                                <div id="sample_id">{{display.id}}</div>
+                            </div>
+                            <div class="left_side_sub_menu_container">
                                 <div class="left_side_sub_menu">数据包Md5</div>
                                 <div id="pcap_md5">{{display.pcap_md5}}</div>
                             </div>
                             <div class="left_side_sub_menu_container">
                                 <div class="left_side_sub_menu">负载大小</div>
                                  <div id="payload_size">{{display.payload_size}}</div>
+                            </div>
+                            <div class="left_side_sub_menu_container">
+                                <div class="left_side_sub_menu">标注词数</div>
+                                <div id="word_segmentation_count">{{display.word_tag_count}}</div>
                             </div>
                             <div class="left_side_sub_menu_container">
                                 <div class="left_side_sub_menu">分词总数</div>
@@ -1075,7 +1083,7 @@ td {
                                     
                                     <div class="prodigy-content">
                                         <div class="c0147" id="words">
-                                            {% if display.is_tagged %}
+                                            <!-- {% if display.is_tagged %}
                                                 {% for word in display.word_tag_text %}
                                                     <span class="c2149" id="{{forloop.counter}}" ondblclick="replace(this);">{{word}}</span>
                                                 {% endfor %}
@@ -1083,7 +1091,7 @@ td {
                                                 {% for word in display.word_segmentation_text %}
                                                     <span class="c2149" id="{{forloop.counter}}" ondblclick="replace(this);">{{word}}</span>
                                                 {% endfor %}
-                                            {% endif %}
+                                            {% endif %}-->
                                         </div>
                                     </div>
                                 </div>
@@ -1128,13 +1136,16 @@ td {
         var max_history_records = 3;
         
         // 全局当前已编辑样本数量
-        var global_edit_sample_count = 0;
+        var global_sample_index = 0;
         
-        // 当前编辑的样本的索引号
-        var global_edit_sample_index = 0;
+        // 当前已编辑的样本的索引号
+        var tagged_sample_indexes = new Array();
         
         // 当前样本已编辑分词数量
         var current_edit_word_count = 0;
+
+        // 尚未进行标记的样本
+        var untagged_sample_indexes = new Array();
         
         // 第一个数据集的所有数据
         var datas = {{ records | safe }};
@@ -1162,7 +1173,6 @@ td {
             newobj.setAttribute("class", "c2149");
             newobj.setAttribute("onclick", "replace(this);");
             newobj.innerText = obj.previousElementSibling.previousElementSibling.innerText;
-            console.log(obj.parentNode.id);
             obj.parentNode.parentNode.insertBefore(newobj, obj.parentNode);
             obj.parentNode.parentNode.removeChild(obj.parentNode);
             
@@ -1183,26 +1193,61 @@ td {
             var index = tools_select.selectedIndex;
             return tools_select.options[index];
         }
+
+        // 创建已标注单词
+        /*function create_tagged_word(id, text, tag){
+            var newobj = document.createElement("mark");
+            newobj.setAttribute("id", id);
+            newobj.setAttribute("class", "c0137 c0151");
+            var first_child = document.createElement("span");
+            first_child.innerText = text;
+            var tag_child = document.createElement("sup");
+            tag_child.innerText = tag;
+            tag_child.setAttribute("class", "c3157, c2258");
+            var third_child = document.createElement("span");
+            third_child.setAttribute("class", "delete_button");
+            third_child.setAttribute("onclick", "canceltag(this);");
+            third_child.innerText = "*";
+            newobj.appendChild(first_child);
+            newobj.appendChild(tag_child);
+            newobj.appendChild(third_child);
+            return newobj;
+        }*/
+
+        // 创建未标注单词
+        function create_untagged_word(id, text){
+            var newobj = document.createElement("span");
+            newobj.setAttribute("class", "c2149");
+            newobj.setAttribute("id", id);
+            newobj.setAttribute("ondblclick", "replace(this);")
+            newobj.innerHTML = text;
+            return newobj;
+        }
         
         // 替换需要标注的文本
-        function replace_words(words, is_tagged=false){
+        function replace_display_text(words, is_tagged=false){
             $("#words").empty();
             var newobj = null;
             var splited_word = null;
             for(j=0, len=words.length;j < len;j++){
-                newobj = document.createElement("span");
-                newobj.setAttribute("class", "2149");
-                newobj.setAttribute("id", j);
-                newobj.setAttribute("ondblclick", "replace(this);")
                 if(is_tagged){
+                    current_edit_word_count += 1;
                     splited_word = words[j].split("@");
-                    console.log(splited_word);
-                    newobj.innerHTML = splited_word[0];
                     if(splited_word.length == 2){
-                        highlight(newobj, splited_word[1]);
+                        // 这种方式创建的标注没有颜色
+                        //newobj = create_tagged_word(j, splited_word[0], splited_word[1]);
                     }
+                    newobj = create_untagged_word(j, splited_word[0]);
+                }else{
+                    newobj = create_untagged_word(j, words[j]);
                 }
                 document.getElementById("words").appendChild(newobj);
+                
+                // 配合create_untagged_word实现create_tagged_word效果并且标签带颜色
+                if(is_tagged && (splited_word.length == 2)){
+                    choosed = splited_word[1];
+                    replace(newobj);
+                }
             }
         }
 
@@ -1238,7 +1283,6 @@ td {
         function refresh_current_progress_bar(){
             var current_sample_progress = document.getElementById("current_sample_progress_value");
             current_sample_progress.innerText = current_edit_word_count + "/" + current_sample_progress.innerText.split("/")[1];
-            console.log(document.getElementById("current_progress").innerText);
 			document.getElementById("current_progress").value = current_edit_word_count*100 / parseInt(current_sample_progress.innerText.split("/")[1]);
             document.getElementById("current_progress_text").innerText = (current_edit_word_count*100 / parseFloat(current_sample_progress.innerText.split("/")[1])).toString() + "%";
         }
@@ -1246,10 +1290,9 @@ td {
 		// 更新总样本处理进度显示
         function refresh_global_progress_bar(){
             var total_sample_progress = document.getElementById("total_sample_progress_value");
-            total_sample_progress.innerText = global_edit_sample_count + "/" + total_sample_progress.innerText.split("/")[1];
-            console.log(document.getElementById("current_progress").innerText);
-			document.getElementById("total_progress").value = global_edit_sample_count*100 / parseFloat(total_sample_progress.innerText.split("/")[1]);
-            document.getElementById("total_progress_text").innerText = (global_edit_sample_count*100 / parseFloat(total_sample_progress.innerText.split("/")[1])).toString() + "%";
+            total_sample_progress.innerText = tagged_sample_indexes.length.toString() + "/" + total_sample_progress.innerText.split("/")[1];
+			document.getElementById("total_progress").value = tagged_sample_indexes.length.toString()*100 / parseFloat(total_sample_progress.innerText.split("/")[1]);
+            document.getElementById("total_progress_text").innerText = (tagged_sample_indexes.length.toString()*100 / parseFloat(total_sample_progress.innerText.split("/")[1])).toString() + "%";
         }
         
 		function add_history_record(is_failed){
@@ -1258,7 +1301,7 @@ td {
 			new_record.setAttribute("class", "history_records");
 			new_record.setAttribute("id", "history_records");
 			var first_child = document.createElement("div");
-			first_child.innerHTML = "样本ID：" + global_edit_sample_count.toString() + " , &emsp;数据包名：.";
+			first_child.innerHTML = "样本ID：" + datas[global_sample_index]["id"] + " , &emsp;数据包MD5：" + datas[global_sample_index]["pcap_nmd5"] + ".";
 			var second_child = document.createElement("span");
 			second_child.setAttribute("class", "succeed_history_record");
             if(!is_failed){
@@ -1286,57 +1329,101 @@ td {
             history_record_container.appendChild(new_record);
 		}
 		
-        function after_commit(commit_result){
-			add_history_record(commit_result);
+        function after_commit(is_failed){
+            if(!is_failed){
+                tagged_sample_indexes.push(global_sample_index);
+            }else{
+                untagged_sample_indexes.push(global_sample_index);
+            }
             
-            // 修改当前样本进度
-            global_edit_sample_count += 1;
-            global_edit_sample_index += 1;
-			refresh_global_progress_bar();			
+            // 在样本索引移动前添加历史记录
+			add_history_record(is_failed);
+
+            global_sample_index += 1;
+            
+            // 修改总进度
+            if(!is_failed){
+			    refresh_global_progress_bar();		
+            }	
+            
+            // 提交后检测是否已遍历完
+            if_runout();
         }
-        
-        // 点击跳过时不刷新页面显示下一个样本
-        function redisplay_sample_without_fresh(pop_first){
-            document.getElementById("pcap_md5").innerHTML = datas[global_edit_sample_index]["pcap_md5"];
-            document.getElementById("payload_size").innerHTML = datas[global_edit_sample_index]["payload_size"];
-            document.getElementById("word_segmentation_count").innerHTML = datas[global_edit_sample_index]["word_segmentation_count"];
-            document.getElementById("last_segmentation_date").innerHTML = datas[global_edit_sample_index]["last_segmentation_date"];
-            document.getElementById("last_tag_date").innerHTML = datas[global_edit_sample_index]["last_tag_date"];
-            document.getElementById("add_date").innerHTML = datas[global_edit_sample_index]["add_date"];
-            document.getElementById("update_date").innerHTML = datas[global_edit_sample_index]["update_date"];
+
+        // 更新样本信息
+        function redisplay_sample_information(sample_obj){
+            document.getElementById("pcap_md5").innerHTML = sample_obj["pcap_md5"];
+            document.getElementById("payload_size").innerHTML = sample_obj["payload_size"];
+            document.getElementById("word_segmentation_count").innerHTML = sample_obj["word_segmentation_count"];
+            document.getElementById("last_segmentation_date").innerHTML = sample_obj["last_segmentation_date"];
+            document.getElementById("last_tag_date").innerHTML = sample_obj["last_tag_date"];
+            document.getElementById("add_date").innerHTML = sample_obj["add_date"];
+            document.getElementById("update_date").innerHTML = sample_obj["update_date"];
             
-            document.getElementById("current_sample_progress_value").innerHTML = "0/" + datas[global_edit_sample_index]["word_segmentation_count"].toString();
+            document.getElementById("current_sample_progress_value").innerHTML = "0/" + sample_obj["word_segmentation_count"].toString();
             document.getElementById("current_progress").value = 0;
             document.getElementById("current_progress_text").innerText = "0%";
+        }
+        
+        // 点击提交、跳过后会自动触发重新显示数据
+        function redisplay_samples(is_traversed){
+            if(is_traversed){
+                // 使用已标注样本索引容器暂存未标注对象
+                tagged_sample_indexes.splice(0, tagged_sample_indexes.length);
+                for(j=0;j < untagged_sample_indexes.length;j++){
+                    tagged_sample_indexes.push(datas[untagged_sample_indexes[j]]);
+                }
+                datas = tagged_sample_indexes.slice(0);
+                tagged_sample_indexes.splice(0, tagged_sample_indexes.length);
+                untagged_sample_indexes.splice(0, untagged_sample_indexes.length);
 
-            if(datas[global_edit_sample_index]["is_tagged"]){
-                replace_words(datas[global_edit_sample_index]["word_tag_text"].split(" "), true);
+                global_sample_index = 0;
+            }
+            
+            current_edit_word_count = 0;
+
+            redisplay_sample_information(datas[global_sample_index]);
+
+            if(datas[global_sample_index]["is_tagged"]){
+                replace_display_text(datas[global_sample_index]["word_tag_text"].split(" "), true);
             }else{
-                replace_words(datas[global_edit_sample_index]["word_segmentation_text"].split(" "), false);
+                replace_display_text(datas[global_sample_index]["word_segmentation_text"].split(" "), false);
             }
-
-            // 未遍历完时，不删除第一个样本
-            if(pop_first){
-                datas = datas.shift();
-            }
+        }
+        
+        // 跳过
+        function skip(){
+            untagged_sample_indexes.push(global_sample_index);
+            // 判断是否已到数据末尾
+            global_sample_index += 1;
+            if_runout();
         }
         
         // 提交标注
         function submmit(){
-            var data_array = new Array();
+            var word_tag_text = "";
+            var word_tag_count = 0;
             var wordnodes = document.getElementById("words").children;
+            // 分词与其NER以@分割，不同分词以" "(空格)分割。
             for(j=0, len=wordnodes.length; j < len;j++){
                 if("MARK" == wordnodes[j].nodeName){
-                    data_array[wordnodes[j].firstChild.innerText] = wordnodes[j].children[1].innerText;
+                    word_tag_count += 1;
+                    word_tag_text += wordnodes[j].firstChild.innerText + "@" + wordnodes[j].children[1].innerText;
                 }else{
-                    data_array[wordnodes[j].innerText] = null;
+                    word_tag_text += wordnodes[j].innerText;
+                }
+                if(j != len - 1){
+                    word_tag_text += " ";
                 }
             }
             
             $.ajax({
                 type: "POST",
-                url: "/aimales/nlp_manual_tag/dataset_name/data_id",
-                data: data_array,
+                url: "/aimales/ner_manual_tag/" + get_selected_dataset().innerText + "/edit_tags/" + document.getElementById("sample_id").innerHTML,
+                data: {
+                    "word_tag_text": word_tag_text,
+                    "word_tag_count": word_tag_count,
+                },
                 dataType: "json",
                 complete: function(data, status){
                    //在这里做些事情，假设返回的json数据里有name这个属性
@@ -1351,15 +1438,14 @@ td {
                    after_commit(status);
                 }
            });
-           
-           if_runout();
         }
         
-        // 该数据集所有样本遍历完之后
+        // 判断是否已遍历至数据集末尾
         function if_runout(){
-            if(global_edit_sample_index >= datas.length){
-                global_edit_sample_index = 0;
-                if(confirm("已到数据记录最后，是否继续标注尚未标注样本？")){
+            if(global_sample_index >= datas.length){
+                if(tagged_sample_indexes.length == datas.length){
+                    alert("该数据集的所有样本已标记完毕，请切换数据集或刷新页面！")
+                    /*tagged_sample_indexes = new Array();
                     $.ajax({
                         type: "GET",
                         url: "/aimales/datasets/" + get_selected_dataset().innerText + "/is_tagged/" + "0",
@@ -1367,28 +1453,31 @@ td {
                         complete: function(data, status){
                             datas = JSON.parse(data.responseText);
                             if(status == 'error'){
-                                alert("刷新数据错误，请稍后重试。");
+                                if(confirm("拉取数据出错，重试？")){
+                                    continue;
+                                }else{
+                                    break;
+                                }
                             }else{
                                 if(datas.length){
-                                    redisplay_sample_without_fresh(true);
+                                    // 重置所有变量，刷新页面
+                                    redisplay_samples(true);
                                 }else{
-                                    alert("所有样本均已标注完毕！");
+                                    alert("无新增未标注样本，请切换数据集或刷新页面！");
                                 }
                             }
                         }
-                   });
+                    });*/
+                }else{
+                    if(confirm("已到数据集末尾，尚有未标注样本，是否继续处理这些样本？")){
+                        // 已遍历至结尾，尚有未标注样本
+                        redisplay_samples(true);
+                    }
                 }
             }else{
-                redisplay_sample_without_fresh(false);
+                // 尚未遍历完数据集，不更新全局容器datas
+                redisplay_samples(false);
             }
-        
-        }
-        
-        // 跳过
-        function skip(){
-            // 为了判断是否已到数据末尾
-            global_edit_sample_index += 1;
-            if_runout();
         }
         
         // 撤销
@@ -1409,6 +1498,16 @@ td {
                     fathernode.removeChild(oldobj);
                 }
             }
+        }
+
+        // 退出，返回NLP工具主页
+        function exit(){
+            window.location.href = "/aimales/nlp_tag_tools.html";
+        }
+
+        //初始加载时
+        window.onload = function(){
+            redisplay_samples(false);
         }
         
         window.ga=window.ga||function(){

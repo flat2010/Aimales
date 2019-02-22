@@ -10,6 +10,9 @@ import sys
 import inspect
 import json
 import datetime
+# resolve warning "RuntimeWarning: DateTimeField xxxx received a naive datetime (2019-02-22 16:01:57.445462) while time zone support is active."
+from django.utils import timezone
+import pytz
 
 # resolve datetime can't be json serialized problem
 class DateTimeJsonEncoder(json.JSONEncoder):
@@ -28,7 +31,7 @@ def aimalesIndex(request):
 
 @login_required
 @csrf_exempt
-def fetchDataset(request, dataset, flag, flag_value, order_field="-id"):
+def fetchDataset(request, dataset, flag, flag_value, order_field="id"):
     flag_value = 1 if u'1' == flag_value else 0
     datas = None
     result = {}
@@ -45,6 +48,30 @@ def fetchDataset(request, dataset, flag, flag_value, order_field="-id"):
     return HttpResponse(json.dumps(datas, cls=DateTimeJsonEncoder))
 
 @login_required
+@csrf_exempt
+def editRecords(request, dataset, record_id):
+    result = {}
+    try:
+        data_class = getattr(aimales_models, dataset)
+        record = data_class.objects.filter(id=record_id)
+        if record:
+            record.update(word_tag_text= request.POST[u"word_tag_text"], 
+                          word_tag_count = request.POST[u"word_tag_count"],
+                          is_tagged = True,
+                          last_tag_date = timezone.now(),
+            )
+            result["result"] = True
+            result["reason"] = "Succeed!"
+        else:
+            result["result"] = False
+            result["reason"] = "Records does not exist!"
+    except Exception as error:
+        print >> sys.stderr, "Error: %s." % error
+        result["result"] = False
+        result["reason"] = error
+    return HttpResponse(json.dumps(result))
+
+@login_required
 def nlpTagTools(request):
     datasets = {}
     for name, obj in inspect.getmembers(aimales_models, inspect.isclass):
@@ -59,7 +86,7 @@ def nlpTagTools(request):
     default_display_data = None
     if len(datasets):
         first_dataset = datasets.keys()[0]
-        all_records = datasets[first_dataset].objects.all().order_by('-id')
+        all_records = datasets[first_dataset].objects.all().order_by('id')
         if len(all_records):
             default_display_data = all_records[0].to_dict()
             all_records = list(all_records.values())
@@ -74,6 +101,14 @@ def nlpTagTools(request):
         'display': default_display_data,
     }
     return render(request, 'nlp_tag_tools.html', return_result)
+
+@login_required
+def nlpRelationTools(request):
+    return render(request, 'nlp_relation_tools.html')
+
+@login_required
+def nlpSegmentationTools(request):
+    return render(request, 'dispayCy/nlpRelationTools.html')
 
 @csrf_exempt
 def loginIndex(request):
