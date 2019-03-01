@@ -30,6 +30,11 @@ def aimalesIndex(request):
     return render(request, 'homepage.html')
 
 @login_required
+def recordOverview(request):
+    return_result = getDatasets()
+    return render(request, 'record_overview.html', return_result)
+
+@login_required
 @csrf_exempt
 def fetchDataset(request, dataset, flag, flag_value, order_field="id"):
     flag_value = 1 if u'1' == flag_value else 0
@@ -71,8 +76,7 @@ def editRecords(request, dataset, record_id):
         result["reason"] = error
     return HttpResponse(json.dumps(result))
 
-@login_required
-def nlpTagTools(request):
+def getDatasets():
     datasets = {}
     for name, obj in inspect.getmembers(aimales_models, inspect.isclass):
         try:
@@ -100,6 +104,11 @@ def nlpTagTools(request):
         'records': json.dumps(all_records, cls=DateTimeJsonEncoder),
         'display': default_display_data,
     }
+    return return_result
+
+@login_required
+def nlpTagTools(request):
+    return_result = getDatasets()
     return render(request, 'nlp_tag_tools.html', return_result)
 
 @login_required
