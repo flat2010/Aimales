@@ -97,6 +97,7 @@ def getDatasets():
             sample_count = len(all_records)
         pcap_count = datasets[first_dataset].objects.values('pcap_md5').distinct().order_by('pcap_md5').count()
         default_display_data[u'word_segmentation_text'] = default_display_data[u'word_segmentation_text'].split(" ")
+        print >> sys.stderr, default_display_data
     return_result = {
         'datasets': datasets.keys(), 
         'pcap_count': pcap_count,

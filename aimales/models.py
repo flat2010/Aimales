@@ -33,6 +33,8 @@ class HttpRequest(models.Model):
     word_segmentation_text = models.TextField(blank=True, null=True)
     # 分词结果数量
     word_segmentation_count = models.IntegerField(blank=True, null=True)
+    # 数据流捕获日期
+    captured_date = models.DateTimeField(blank=True, null=True)
     # 创建日期
     add_date = models.DateTimeField(blank=True, null=True, auto_now_add=True)
     # 最后更新日期
