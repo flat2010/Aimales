@@ -13,26 +13,52 @@ var EditableTable = function () {
                 oTable.fnDraw();
             }
 
-            function editRow(oTable, nRow) {
+            function editRow(oTable, nRow, is_new=false) {
                 var aData = oTable.fnGetData(nRow);
                 var jqTds = $('>td', nRow);
-                jqTds[0].innerHTML = '<input type="text" class="form-control small" value="' + aData[0] + '">';
-                jqTds[1].innerHTML = '<input type="text" class="form-control small" value="' + aData[1] + '">';
-                jqTds[2].innerHTML = '<input type="text" class="form-control small" value="' + aData[2] + '">';
-                jqTds[3].innerHTML = '<input type="text" class="form-control small" value="' + aData[3] + '">';
-                jqTds[4].innerHTML = '<input type="text" class="form-control small" value="' + aData[3] + '">';
-                jqTds[5].innerHTML = '<input type="text" class="form-control small" value="' + aData[3] + '">';
-                jqTds[6].innerHTML = '<a class="edit" href=""><span class="label label-primary">Save&emsp;</span></a> <a class="cancel" href=""><span class="label label-info">Cancel</span></a>';
+                // ID
+                if(is_new){
+                    var max_id = 1;
+                    $("table tr td:first-child").each(function(i){
+                        if(parseInt($(this).text()) > max_id){
+                            max_id = parseInt($(this).text());
+                        }
+                    });
+                    jqTds[0].innerHTML = '<input readonly="readonly" style="width:100%;" type="text" class="form-control small" value="' + (max_id + 1).toString() + '">';
+                }else{
+                    jqTds[0].innerHTML = '<input readonly="readonly" style="width:100%;" type="text" class="form-control small" value="' + aData[0] + '">';
+                }
+                // MD5
+                jqTds[1].innerHTML = '<input readonly="readonly" style="width:100%;" type="text" class="form-control small" placeholder="自动计算" value="' + aData[1] + '">';
+                // 负载内容
+                jqTds[2].innerHTML = '<input style="width:100%;" type="text" class="form-control small" value="' + aData[2] + '">';
+                // 分词结果
+                jqTds[3].innerHTML = '<input style="width:100%;" type="text" class="form-control small" value="' + aData[3] + '">';
+                // 标注结果
+                jqTds[4].innerHTML = '<input style="width:100%;" type="text" class="form-control small" value="' + aData[3] + '">';
+                // 时间戳
+                jqTds[5].innerHTML = '<input style="width:100%;" type="text" class="form-control small" value="' + aData[3] + '">';
+                // 编辑栏
+                if(is_new){
+                    jqTds[6].innerHTML = '<a class="save" href=""><i class="fa fa-save">保存&emsp;</i></a> <a data-mode="new" class="cancel" href=""><i class="fa fa-undo">取消;</i></a>';
+                }else{
+                    jqTds[6].innerHTML = '<a class="edit" href=""><i class="fa fa-save">编辑&emsp;</i></a> <a class="cancel" href=""><i class="fa fa-undo">取消;</i></a>';
+                }
             }
 
             function saveRow(oTable, nRow) {
+                console.log("call saveRow...");
                 var jqInputs = $('input', nRow);
                 oTable.fnUpdate(jqInputs[0].value, nRow, 0, false);
+                // Md5根据负载自动计算
+                var pcap_md5 = md5(jqInputs[2].value);
+                console.log(pcap_md5);
                 oTable.fnUpdate(jqInputs[1].value, nRow, 1, false);
                 oTable.fnUpdate(jqInputs[2].value, nRow, 2, false);
                 oTable.fnUpdate(jqInputs[3].value, nRow, 3, false);
-                oTable.fnUpdate('<a class="edit" href=""><span class="label label-success">Edit</span></a>', nRow, 4, false);
-                oTable.fnUpdate('<a class="delete" href=""><span class="label label-danger">Delete</span></a>', nRow, 5, false);
+                oTable.fnUpdate(jqInputs[4].value, nRow, 4, false);
+                oTable.fnUpdate(jqInputs[5].value, nRow, 5, false);
+                oTable.fnUpdate('<a class="edit" href=""><i class="fa fa-save">保存&emsp;</i></a> <a class="cancel" href=""><i class="fa fa-undo">取消;</i></a>', nRow, 6, false);
                 oTable.fnDraw();
             }
 
@@ -70,20 +96,51 @@ var EditableTable = function () {
             var nEditing = null;
             $('#editable-sample_new').click(function (e) {
                 e.preventDefault();
-                var aiNew = oTable.fnAddData(['', '', '', '', '<a class="edit" href="">Edit</a>', '<a class="cancel" data-mode="new" href="">Cancel</a>']);
+                var aiNew = oTable.fnAddData(['', '', '', '', '', '', '<a class="save" href=""><i class="fa fa-save">保存&emsp;</i></a> <a class="cancel" href=""><i class="fa fa-undo">取消;</i></a>']);
                 var nRow = oTable.fnGetNodes(aiNew[0]);
-                editRow(oTable, nRow);
+                editRow(oTable, nRow, true);
                 nEditing = nRow;
             });
+
+            // 删除记录
             $('#editable-sample a.delete').live('click', function (e) {
                 e.preventDefault();
-                if (confirm("Are you sure to delete this row ?") == false) {
+                if (confirm("确定删除此条记录？") == false) {
                     return;
                 }
-                var nRow = $(this).parents('tr')[0];
-                oTable.fnDeleteRow(nRow);
-                alert("Deleted! Do not forget to do some ajax to sync with backend :)");
+                var dataset_name = $('#dataset_name')[0].innerText;
+                var record_id = $(this).parents('tr').children()[0].innerText;
+                var pcap_md5 = $(this).parents('tr').children('#pcap_md5')[0].innerText;
+                var payload_ascii = $(this).parents('tr').children('#payload_ascii')[0].innerText;
+                var word_segmentation_text = $(this).parents('tr').children('#word_segmentation_text')[0].innerText;
+                var word_tag_text = $(this).parents('tr').children('#word_tag_text')[0].innerText;
+                var captured_date = $(this).parents('tr').children('#captured_date')[0].innerText;
+            
+                $.ajax({
+                    type: "POST",
+                    url: "/aimales/dataset/" + dataset_name + "/edit/delete/" + record_id,
+                    data: {
+                        "pcap_md5": pcap_md5,
+                        "payload_ascii": payload_ascii,
+                        "word_segmentation_text": word_segmentation_text,
+                        "word_tag_text": word_tag_text,
+                        "captured_date": captured_date,
+                    },
+                    dataType: "json",
+                    complete: function(data, status){
+                       alert("提交成功");
+                       if(status == 'error'){
+                           status = true;
+                       }else{
+                            var nRow = $(this).parents('tr')[0];
+                            oTable.fnDeleteRow(nRow);
+                           status = false;
+                       }
+                    }
+                });
             });
+
+            // 取消新增数据记录
             $('#editable-sample a.cancel').live('click', function (e) {
                 e.preventDefault();
                 if ($(this).attr("data-mode") == "new") {
@@ -94,14 +151,45 @@ var EditableTable = function () {
                     nEditing = null;
                 }
             });
+            
+            // 保存编辑结果
             $('#editable-sample a.edit').live('click', function (e) {
                 e.preventDefault();
+                var dataset_name = $('#dataset_name')[0].innerText;
+                var record_id = $(this).parents('tr').children()[0].innerText;
+                var pcap_md5 = $(this).parents('tr').children('#pcap_md5')[0].innerText;
+                var payload_ascii = $(this).parents('tr').children('#payload_ascii')[0].innerText;
+                var word_segmentation_text = $(this).parents('tr').children('#word_segmentation_text')[0].innerText;
+                var word_tag_text = $(this).parents('tr').children('#word_tag_text')[0].innerText;
+                var captured_date = $(this).parents('tr').children('#captured_date')[0].innerText;
+            
+                $.ajax({
+                    type: "POST",
+                    url: "/aimales/dataset/" + dataset_name + "/edit/delete/" + record_id,
+                    data: {
+                        "pcap_md5": pcap_md5,
+                        "payload_ascii": payload_ascii,
+                        "word_segmentation_text": word_segmentation_text,
+                        "word_tag_text": word_tag_text,
+                        "captured_date": captured_date,
+                    },
+                    dataType: "json",
+                    complete: function(data, status){
+                       if(status == 'error'){
+                           status = true;
+                           return false;
+                       }else{
+                            alert("提交成功");
+                            status = false;
+                       }
+                    }
+                });
                 var nRow = $(this).parents('tr')[0];
                 if (nEditing !== null && nEditing != nRow) {
-                    restoreRow(oTable, nEditing);
+                    //restoreRow(oTable, nEditing);
                     editRow(oTable, nRow);
                     nEditing = nRow;
-                } else if (nEditing == nRow && this.innerHTML == "Save") {
+                } else if (nEditing == nRow && $(this).children()[0].innerText == "保存") {
                     saveRow(oTable, nEditing);
                     nEditing = null;
                     alert("Updated! Do not forget to do some ajax to sync with backend :)");

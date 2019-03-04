@@ -3310,7 +3310,7 @@ ul.amounts li {
 }
 
 .dataTables_filter label input {
-	width: 78%;
+	width: 50%;
 }
 
 .border-top {
@@ -5012,12 +5012,12 @@ td.details table tr td, .dataTable tr:last-child {
 .adv-table .dataTables_filter label input {
 	float: right;
 	margin-left: 10px;
-	width: 78%;
+	width: 80%;
 }
 
 .adv-table .dataTables_filter label {
 	line-height: 33px;
-	width: 100%;
+	width: 50%;
 }
 
 .adv-table .dataTables_length select {
