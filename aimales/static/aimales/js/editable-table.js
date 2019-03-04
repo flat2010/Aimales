@@ -40,9 +40,9 @@ var EditableTable = function () {
                 jqTds[5].innerHTML = '<input style="width:100%;" type="text" class="form-control small" value="' + aData[3] + '">';
                 // 编辑栏
                 if(is_new){
-                    jqTds[6].innerHTML = '<a class="save" href=""><i class="fa fa-save">保存&emsp;</i></a> <a data-mode="new" class="cancel" href=""><i class="fa fa-undo">取消;</i></a>';
+                    jqTds[6].innerHTML = '<a class="save" data-mode="new" href=""><i class="fa fa-save">保存&emsp;</i></a> <a data-mode="new" class="cancel" href=""><i class="fa fa-undo">取消</i></a>';
                 }else{
-                    jqTds[6].innerHTML = '<a class="edit" href=""><i class="fa fa-save">编辑&emsp;</i></a> <a class="cancel" href=""><i class="fa fa-undo">取消;</i></a>';
+                    jqTds[6].innerHTML = '<a class="save" data-mode="old" href=""><i class="fa fa-save">保存&emsp;</i></a> <a data-mode="old" class="cancel" href=""><i class="fa fa-undo">取消;</i></a>';
                 }
             }
 
@@ -58,11 +58,12 @@ var EditableTable = function () {
                 oTable.fnUpdate(jqInputs[3].value, nRow, 3, false);
                 oTable.fnUpdate(jqInputs[4].value, nRow, 4, false);
                 oTable.fnUpdate(jqInputs[5].value, nRow, 5, false);
-                oTable.fnUpdate('<a class="edit" href=""><i class="fa fa-save">保存&emsp;</i></a> <a class="cancel" href=""><i class="fa fa-undo">取消;</i></a>', nRow, 6, false);
+                oTable.fnUpdate('<a class="edit" href=""><i class="fa fa-save">编辑&emsp;</i></a> <a class="cancel" href=""><i class="fa fa-undo">取消;</i></a>', nRow, 6, false);
                 oTable.fnDraw();
             }
 
             function cancelEditRow(oTable, nRow) {
+                console.log("cancel saveRow...");
                 var jqInputs = $('input', nRow);
                 oTable.fnUpdate(jqInputs[0].value, nRow, 0, false);
                 oTable.fnUpdate(jqInputs[1].value, nRow, 1, false);
@@ -95,6 +96,7 @@ var EditableTable = function () {
             jQuery('#editable-sample_wrapper .dataTables_length select').addClass("form-control xsmall");
             var nEditing = null;
             $('#editable-sample_new').click(function (e) {
+                console.log("call 新增数据...");
                 e.preventDefault();
                 var aiNew = oTable.fnAddData(['', '', '', '', '', '', '<a class="save" href=""><i class="fa fa-save">保存&emsp;</i></a> <a class="cancel" href=""><i class="fa fa-undo">取消;</i></a>']);
                 var nRow = oTable.fnGetNodes(aiNew[0]);
@@ -102,8 +104,56 @@ var EditableTable = function () {
                 nEditing = nRow;
             });
 
+            $('#editable-sample a.save').live('click', function (e) {
+                console.log("call a.save...");
+                e.preventDefault();
+                var all_datas = {};
+                var dataset_name = $('#dataset_name')[0].innerText;
+                var record_id = $(this).parents('tr').children()[0].innerText;
+                all_datas["datas"] = {
+                    "pcap_md5":  $(this).parents('tr').children()[1].innerText,
+                    "payload_ascii":  $(this).parents('tr').children()[2].innerText,
+                    "word_segmentation_text":  $(this).parents('tr').children()[3].innerText,
+                    "word_tag_text":  $(this).parents('tr').children()[4].innerText,
+                    "captured_date":  $(this).parents('tr').children()[5].innerText,
+                }
+                if ($(this).attr("data-mode") == "new") {
+                    all_datas["url"] = "/aimales/dataset/" + dataset_name + "/edit/create/" + record_id;
+                }else{
+                    all_datas["url"] = "/aimales/dataset/" + dataset_name + "/edit/modify/" + record_id;
+                }
+                var a_node = $(this)[0];
+                var tr_node = $(this).parent().parent();
+                var nRow = $(this).parents('tr')[0];
+                var td_nodes = tr_node[0].children;
+                td_nodes[0].firstChild.innerText = record_id;
+                td_nodes[0].firstChild.removeAttribute("readonly");
+                console.log(td_nodes[0]);
+                tr_node[0][0];
+                $.ajax({
+                    type: "POST",
+                    url: all_datas["url"],
+                    data: all_datas["datas"],
+                    dataType: "json",
+                    complete: function(data, status){
+                        if(status != 'error'){
+                            status = true;
+                        }else{
+                            alert("提交成功");
+                            //var nRow = $(this).parents('tr')[0];
+                            //oTable.fnDeleteRow(nRow);
+                            status = false;
+                            if(a_node.getAttribute("data-mode") == "new"){
+                                $('tr:last').after(tr_node);
+                            }
+                        }
+                    }
+                });
+            });
+
             // 删除记录
             $('#editable-sample a.delete').live('click', function (e) {
+                console.log("call a.delete...");
                 e.preventDefault();
                 if (confirm("确定删除此条记录？") == false) {
                     return;
@@ -142,6 +192,7 @@ var EditableTable = function () {
 
             // 取消新增数据记录
             $('#editable-sample a.cancel').live('click', function (e) {
+                console.log("call a.cancel...");
                 e.preventDefault();
                 if ($(this).attr("data-mode") == "new") {
                     var nRow = $(this).parents('tr')[0];
@@ -154,6 +205,7 @@ var EditableTable = function () {
             
             // 保存编辑结果
             $('#editable-sample a.edit').live('click', function (e) {
+                console.log("call a.edit...");
                 e.preventDefault();
                 var dataset_name = $('#dataset_name')[0].innerText;
                 var record_id = $(this).parents('tr').children()[0].innerText;
