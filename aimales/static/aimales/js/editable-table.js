@@ -13,18 +13,34 @@ var EditableTable = function () {
                 oTable.fnDraw();
             }
 
+            // 引入Md5的js脚本
+            var script = document.createElement("script");
+            script.setAttribute("type", "text/javascript");
+            script.setAttribute("language", "javascript");
+            script.setAttribute("src", "{% static 'aimales/js/md5.min.js' %}");
+
+            // 最大记录ID号，用来创建新纪录
+            var max_id = 1;
+            $("table tr td:first-child").each(function(i){
+                if(parseInt($(this).text()) > max_id){
+                    max_id = parseInt($(this).text());
+                }
+            });
+            max_id += 1;
+
+            
+            // 现在前端做一次校验，确保没有重复的负载数据
+            var exist_md5 = new Array();
+            $("table tr td:nth-child(2)").each(function(){
+                exist_md5.push($(this).text());
+            });
+
             function editRow(oTable, nRow, is_new=false) {
                 var aData = oTable.fnGetData(nRow);
                 var jqTds = $('>td', nRow);
                 // ID
                 if(is_new){
-                    var max_id = 1;
-                    $("table tr td:first-child").each(function(i){
-                        if(parseInt($(this).text()) > max_id){
-                            max_id = parseInt($(this).text());
-                        }
-                    });
-                    jqTds[0].innerHTML = '<input readonly="readonly" style="width:100%;" type="text" class="form-control small" value="' + (max_id + 1).toString() + '">';
+                    jqTds[0].innerHTML = '<input readonly="readonly" style="width:100%;" type="text" class="form-control small" value="' + (max_id).toString() + '">';
                 }else{
                     jqTds[0].innerHTML = '<input readonly="readonly" style="width:100%;" type="text" class="form-control small" value="' + aData[0] + '">';
                 }
@@ -52,7 +68,6 @@ var EditableTable = function () {
                 oTable.fnUpdate(jqInputs[0].value, nRow, 0, false);
                 // Md5根据负载自动计算
                 var pcap_md5 = md5(jqInputs[2].value);
-                console.log(pcap_md5);
                 oTable.fnUpdate(jqInputs[1].value, nRow, 1, false);
                 oTable.fnUpdate(jqInputs[2].value, nRow, 2, false);
                 oTable.fnUpdate(jqInputs[3].value, nRow, 3, false);
@@ -95,7 +110,13 @@ var EditableTable = function () {
             jQuery('#editable-sample_wrapper .dataTables_filter input').addClass("form-control medium");
             jQuery('#editable-sample_wrapper .dataTables_length select').addClass("form-control xsmall");
             var nEditing = null;
+            
             $('#editable-sample_new').click(function (e) {
+                // 为了防止数据记录id混乱，新增记录必须编辑完后才能新增下一条
+                if($("a[data-mode='new']").length){
+                    alert("请完成正在编辑的记录！");
+                    return false;
+                }
                 console.log("call 新增数据...");
                 e.preventDefault();
                 var aiNew = oTable.fnAddData(['', '', '', '', '', '', '<a class="save" href=""><i class="fa fa-save">保存&emsp;</i></a> <a class="cancel" href=""><i class="fa fa-undo">取消;</i></a>']);
@@ -107,15 +128,28 @@ var EditableTable = function () {
             $('#editable-sample a.save').live('click', function (e) {
                 console.log("call a.save...");
                 e.preventDefault();
+
+                var nRow = oTable.fnGetPosition($(this).parents('tr')[0]);
+                var new_row = document.getElementById("editable_table_body").rows[0];
+                var record_id = new_row.cells[0].children[0].value;
+                var payload_ascii = new_row.cells[2].children[0];
+                var pcap_md5 = md5(payload_ascii);
+                if(exist_md5.indexOf(pcap_md5) != -1){
+                    alert("已有相同MD5的数据记录存在，请检查后再试！");
+                    return false;
+                }
+                var word_segmentation_text = new_row.cells[3].children[0];
+                var word_tag_text = new_row.cells[4].children[0];
+                var captured_date = new_row.cells[5].children[0];
+
                 var all_datas = {};
                 var dataset_name = $('#dataset_name')[0].innerText;
-                var record_id = $(this).parents('tr').children()[0].innerText;
                 all_datas["datas"] = {
-                    "pcap_md5":  $(this).parents('tr').children()[1].innerText,
-                    "payload_ascii":  $(this).parents('tr').children()[2].innerText,
-                    "word_segmentation_text":  $(this).parents('tr').children()[3].innerText,
-                    "word_tag_text":  $(this).parents('tr').children()[4].innerText,
-                    "captured_date":  $(this).parents('tr').children()[5].innerText,
+                    "pcap_md5":  pcap_md5,
+                    "payload_ascii":  payload_ascii.value,
+                    "word_segmentation_text":  word_segmentation_text.value,
+                    "word_tag_text":  word_tag_text.value,
+                    "captured_date":  captured_date.value,
                 }
                 if ($(this).attr("data-mode") == "new") {
                     all_datas["url"] = "/aimales/dataset/" + dataset_name + "/edit/create/" + record_id;
@@ -124,29 +158,54 @@ var EditableTable = function () {
                 }
                 var a_node = $(this)[0];
                 var tr_node = $(this).parent().parent();
-                var nRow = $(this).parents('tr')[0];
                 var td_nodes = tr_node[0].children;
-                td_nodes[0].firstChild.innerText = record_id;
-                td_nodes[0].firstChild.removeAttribute("readonly");
-                console.log(td_nodes[0]);
-                tr_node[0][0];
+                
+                var new_row_values = [record_id, 
+                    all_datas["datas"]["pcap_md5"],
+                    all_datas["datas"]["payload_ascii"], 
+                    all_datas["datas"]["word_segmentation_text"],
+                    all_datas["datas"]["word_tag_text"],
+                    all_datas["datas"]["captured_date"],
+                    '<a data-mode="old" class="edit" href=""><i class="fa fa-edit">编辑&emsp;</i></a> <a data-mode="old" class="cancel" href=""><i class="fa fa-times-circle">删除</i></a>',
+                ]
+
+                var new_tail_row = oTable.fnGetNodes(oTable.fnAddData(new_row_values)[0]);
+                new_tail_row.children[1].setAttribute("class", "hidden-phone ");
+                new_tail_row.children[1].setAttribute("id", "pcap_md5");
+
+                new_tail_row.children[2].setAttribute("class", "hidden-phone ");
+                new_tail_row.children[2].setAttribute("id", "payload_ascii");
+
+                new_tail_row.children[3].setAttribute("class", "center hidden-phone ");
+                new_tail_row.children[3].setAttribute("id", "word_segmentation_text");
+
+                new_tail_row.children[4].setAttribute("class", "center hidden-phone ");
+                new_tail_row.children[4].setAttribute("id", "word_tag_text");
+
+                new_tail_row.children[5].setAttribute("class", "center hidden-phone ");
+                new_tail_row.children[5].setAttribute("id", "captured_date");
+
                 $.ajax({
                     type: "POST",
                     url: all_datas["url"],
                     data: all_datas["datas"],
                     dataType: "json",
                     complete: function(data, status){
-                        if(status != 'error'){
+                        if(status == 'error'){
+                            alert("提交失败！");
                             status = true;
                         }else{
-                            alert("提交成功");
-                            //var nRow = $(this).parents('tr')[0];
-                            //oTable.fnDeleteRow(nRow);
+                            alert("提交成功。");
                             status = false;
-                            if(a_node.getAttribute("data-mode") == "new"){
+                            /*if(a_node.getAttribute("data-mode") == "new"){
                                 $('tr:last').after(tr_node);
-                            }
+                            }*/
                         }
+                        max_id += 1;
+                        exist_md5.push(pcap_md5);
+                        
+                        oTable.fnDeleteRow(nRow);
+                        oTable.fnDraw();
                     }
                 });
             });
@@ -178,13 +237,14 @@ var EditableTable = function () {
                     },
                     dataType: "json",
                     complete: function(data, status){
-                       alert("提交成功");
                        if(status == 'error'){
                            status = true;
                        }else{
+                            alert("提交成功");
                             var nRow = $(this).parents('tr')[0];
                             oTable.fnDeleteRow(nRow);
-                           status = false;
+                            status = false;
+                            md5.remove(pcap_md5);
                        }
                     }
                 });

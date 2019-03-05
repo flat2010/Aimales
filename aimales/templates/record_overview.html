@@ -618,7 +618,7 @@
                                  <th>数据操作</th>
                               </tr>
                            </thead>
-                           <tbody>
+                           <tbody id="editable_table_body">
                               <tr class="">
                                  <td>{{display.id}}</td>
                                  <td class="hidden-phone" id="pcap_md5">{{display.pcap_md5}}</td>
@@ -633,7 +633,7 @@
                               </tr>
                               <tr class="">
                                  <td>2</td>
-                                 <td class="hidden-phone">Jonathan Smith</td>
+                                 <td class="hidden-phone" id="pcap_md5">Jonathan Smith</td>
                                  <td class="hidden-phone">434</td>
                                  <td class="center hidden-phone">new user</td>
                                  <td class="center hidden-phone">new user</td>
@@ -645,7 +645,7 @@
                               </tr>
                               <tr class="">
                                  <td>3</td>
-                                 <td class="hidden-phone"> Sumon Ahmed</td>
+                                 <td class="hidden-phone" id="pcap_md5"> Sumon Ahmed</td>
                                  <td class="hidden-phone">232</td>
                                  <td class="center hidden-phone">super user</td>
                                  <td class="center hidden-phone">new user</td>
@@ -700,6 +700,7 @@
 		<script src="{% static 'aimales/js/respond.min.js' %}" ></script><!-- RESPOND JS  -->
 		<script src="{% static 'aimales/js/common-scripts.js' %}" ></script><!-- BASIC COMMON JS  -->
 		<script src="{% static 'aimales/js/editable-table.js' %}" ></script><!-- EDITABLE TABLE JS  -->
+		<script src="{% static 'aimales/js/md5.min.js' %}" ></script><!-- MD5 JS  -->
       <script >
 	     <!-- EDITABLE TABLE FUNCTION  -->
          jQuery(document).ready(function() {
