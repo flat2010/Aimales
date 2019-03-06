@@ -18,5 +18,6 @@ urlpatterns = patterns('',
     url(r'^nlp_tools/nlp_relation_tools.html$', views.nlpRelationTools),
     url(r'^nlp_tools/nlp_segmentation_tools.html$', views.nlpSegmentationTools),
     url(r'^datasets/(?P<dataset>\S+)/(?P<flag>\S+)/(?P<flag_value>\S+)$', views.fetchDataset),
+    url(r'^edit_dataset/(?P<dataset>\S+)/(?P<operation>\S+)/(?P<record_id>\d+)$', views.editDataset),
     url(r'^ner_manual_tag/(?P<dataset>\S+)/edit_tags/(?P<record_id>\S+)$', views.editRecords),
 )

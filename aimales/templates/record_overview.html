@@ -619,54 +619,20 @@
                               </tr>
                            </thead>
                            <tbody id="editable_table_body">
-                              <tr class="">
-                                 <td>{{display.id}}</td>
-                                 <td class="hidden-phone" id="pcap_md5">{{display.pcap_md5}}</td>
-                                 <td class="hidden-phone" id="payload_ascii">{{display.payload_ascii}}</td>
-                                 <td class="center hidden-phone" id="word_segmentation_text">{{display.word_segmentation_text}}</td>
-                                 <td class="center hidden-phone" id="word_tag_text">{{display.word_tag_text}}</td>
-                                 <td class="center hidden-phone" id="captured_date">{{display.captured_date}}</td>
-                                 <td>
-                                  <a class="edit" href="javascript:;"><i class="fa fa-pencil-square-o">编辑&emsp;</i></a>
-                                  <a class="delete" href="javascript:;"><i class="fa fa-times-circle">删除</i></a>
-                                </td>
-                              </tr>
-                              <tr class="">
-                                 <td>2</td>
-                                 <td class="hidden-phone" id="pcap_md5">Jonathan Smith</td>
-                                 <td class="hidden-phone">434</td>
-                                 <td class="center hidden-phone">new user</td>
-                                 <td class="center hidden-phone">new user</td>
-                                 <td class="center hidden-phone">new user</td>
-                                 <td>
-                                  <a class="edit" href="javascript:;"><i class="fa fa-pencil-square-o">编辑&emsp;</i></a>
-                                  <a class="delete" href="javascript:;"><i class="fa fa-times-circle">删除</i></a>
-                                </td>
-                              </tr>
-                              <tr class="">
-                                 <td>3</td>
-                                 <td class="hidden-phone" id="pcap_md5"> Sumon Ahmed</td>
-                                 <td class="hidden-phone">232</td>
-                                 <td class="center hidden-phone">super user</td>
-                                 <td class="center hidden-phone">new user</td>
-                                 <td class="center hidden-phone">new user</td>
-                                 <td>
-                                  <a class="edit" href="javascript:;"><i class="fa fa-pencil-square-o">编辑&emsp;</i></a>
-                                  <a class="delete" href="javascript:;"><i class="fa fa-times-circle">删除</i></a>
-                                </td>
-                              </tr>
-                              <tr class="">
-                                 <td>4</td>
-                                 <td class="hidden-phone">dk mosa</td>
-                                 <td class="hidden-phone">132</td>
-                                 <td class="center hidden-phone">elite user</td>
-                                 <td class="center hidden-phone">new user</td>
-                                 <td class="center hidden-phone">new user</td>
-                                 <td>
-                                  <a class="edit" href="javascript:;"><i class="fa fa-pencil-square-o">编辑&emsp;</i></a>
-                                  <a class="delete" href="javascript:;"><i class="fa fa-times-circle">删除</i></a>
-                                </td>
-                              </tr>
+                               {% for record in records %}
+                                <tr class="">
+                                    <td>{{record.id}}</td>
+                                    <td class="hidden-phone" id="pcap_md5">{{record.pcap_md5}}</td>
+                                    <td class="hidden-phone" id="payload_ascii">{{record.payload_ascii}}</td>
+                                    <td class="center hidden-phone" id="word_segmentation_text">{{record.word_segmentation_text}}</td>
+                                    <td class="center hidden-phone" id="word_tag_text">{{record.word_tag_text}}</td>
+                                    <td class="center hidden-phone" id="captured_date">{{record.captured_date|date:"Y-m-d H:i:s"}}</td>
+                                    <td>
+                                    <a class="edit" href="javascript:;"><i class="fa fa-pencil-square-o">编辑&emsp;</i></a>
+                                    <a class="delete" href="javascript:;"><i class="fa fa-times-circle">删除</i></a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
                            </tbody>
                         </table>
                      </div>

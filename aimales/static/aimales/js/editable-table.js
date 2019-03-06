@@ -13,6 +13,14 @@ var EditableTable = function () {
                 oTable.fnDraw();
             }
 
+            // js数组删除元素的实现
+            Array.prototype.remove = function(value){
+                var index = this.indexOf(value);
+                if(index  != -1){
+                    this.splice(index, 1);
+                }
+            };
+
             // 引入Md5的js脚本
             var script = document.createElement("script");
             script.setAttribute("type", "text/javascript");
@@ -38,6 +46,10 @@ var EditableTable = function () {
             function editRow(oTable, nRow, is_new=false) {
                 var aData = oTable.fnGetData(nRow);
                 var jqTds = $('>td', nRow);
+                // 对已有记录编辑时，先把其md5值弹出数组，防止保存时判断为重复MD5
+                if(!is_new){
+                    exist_md5.remove(aData[1]);
+                }
                 // ID
                 if(is_new){
                     jqTds[0].innerHTML = '<input readonly="readonly" style="width:100%;" type="text" class="form-control small" value="' + (max_id).toString() + '">';
@@ -51,9 +63,9 @@ var EditableTable = function () {
                 // 分词结果
                 jqTds[3].innerHTML = '<input style="width:100%;" type="text" class="form-control small" value="' + aData[3] + '">';
                 // 标注结果
-                jqTds[4].innerHTML = '<input style="width:100%;" type="text" class="form-control small" value="' + aData[3] + '">';
+                jqTds[4].innerHTML = '<input style="width:100%;" type="text" class="form-control small" value="' + aData[4] + '">';
                 // 时间戳
-                jqTds[5].innerHTML = '<input style="width:100%;" type="text" class="form-control small" value="' + aData[3] + '">';
+                jqTds[5].innerHTML = '<input style="width:100%;" type="text" class="form-control small" value="' + aData[5] + '">';
                 // 编辑栏
                 if(is_new){
                     jqTds[6].innerHTML = '<a class="save" data-mode="new" href=""><i class="fa fa-save">保存&emsp;</i></a> <a data-mode="new" class="cancel" href=""><i class="fa fa-undo">取消</i></a>';
@@ -129,38 +141,35 @@ var EditableTable = function () {
                 console.log("call a.save...");
                 e.preventDefault();
 
+                var is_new = $(this).attr("data-mode") == "new";
+
                 var nRow = oTable.fnGetPosition($(this).parents('tr')[0]);
-                var new_row = document.getElementById("editable_table_body").rows[0];
-                var record_id = new_row.cells[0].children[0].value;
-                var payload_ascii = new_row.cells[2].children[0];
-                var pcap_md5 = md5(payload_ascii);
+                var row_datas = oTable.fnGetData(nRow);
+                
                 if(exist_md5.indexOf(pcap_md5) != -1){
                     alert("已有相同MD5的数据记录存在，请检查后再试！");
                     return false;
                 }
-                var word_segmentation_text = new_row.cells[3].children[0];
-                var word_tag_text = new_row.cells[4].children[0];
-                var captured_date = new_row.cells[5].children[0];
 
                 var all_datas = {};
                 var dataset_name = $('#dataset_name')[0].innerText;
                 all_datas["datas"] = {
-                    "pcap_md5":  pcap_md5,
-                    "payload_ascii":  payload_ascii.value,
-                    "word_segmentation_text":  word_segmentation_text.value,
-                    "word_tag_text":  word_tag_text.value,
-                    "captured_date":  captured_date.value,
+                    "pcap_md5":  md5(row_datas[1]),
+                    "payload_ascii":  row_datas[2],
+                    "word_segmentation_text":  row_datas[3],
+                    "word_tag_text":  row_datas[4],
+                    "captured_date":  row_datas[5],
                 }
-                if ($(this).attr("data-mode") == "new") {
-                    all_datas["url"] = "/aimales/dataset/" + dataset_name + "/edit/create/" + record_id;
+                if (is_new) {
+                    all_datas["url"] = "/aimales/edit_dataset/" + dataset_name + "/create/" + row_datas[0];
                 }else{
-                    all_datas["url"] = "/aimales/dataset/" + dataset_name + "/edit/modify/" + record_id;
+                    all_datas["url"] = "/aimales/edit_dataset/" + dataset_name + "/modify/" + row_datas[0];
                 }
-                var a_node = $(this)[0];
+               /* var a_node = $(this)[0];
                 var tr_node = $(this).parent().parent();
-                var td_nodes = tr_node[0].children;
+                var td_nodes = tr_node[0].children;*/
                 
-                var new_row_values = [record_id, 
+                var new_row_values = [row_datas[0], 
                     all_datas["datas"]["pcap_md5"],
                     all_datas["datas"]["payload_ascii"], 
                     all_datas["datas"]["word_segmentation_text"],
@@ -184,18 +193,19 @@ var EditableTable = function () {
 
                 new_tail_row.children[5].setAttribute("class", "center hidden-phone ");
                 new_tail_row.children[5].setAttribute("id", "captured_date");
-
+                console.log(all_datas["datas"]);
                 $.ajax({
                     type: "POST",
                     url: all_datas["url"],
                     data: all_datas["datas"],
                     dataType: "json",
                     complete: function(data, status){
-                        if(status == 'error'){
-                            alert("提交失败！");
+                        console.log(data["status"]);
+                        if(data["status"] == 'error'){
+                            alert(data["reason"]);
                             status = true;
                         }else{
-                            alert("提交成功。");
+                            alert(data["reason"]);
                             status = false;
                             /*if(a_node.getAttribute("data-mode") == "new"){
                                 $('tr:last').after(tr_node);
@@ -227,7 +237,7 @@ var EditableTable = function () {
             
                 $.ajax({
                     type: "POST",
-                    url: "/aimales/dataset/" + dataset_name + "/edit/delete/" + record_id,
+                    url: "/aimales/edit_dataset/" + dataset_name + "/delete/" + record_id,
                     data: {
                         "pcap_md5": pcap_md5,
                         "payload_ascii": payload_ascii,
@@ -244,7 +254,7 @@ var EditableTable = function () {
                             var nRow = $(this).parents('tr')[0];
                             oTable.fnDeleteRow(nRow);
                             status = false;
-                            md5.remove(pcap_md5);
+                            exist_md5.remove(pcap_md5);
                        }
                     }
                 });
@@ -254,10 +264,11 @@ var EditableTable = function () {
             $('#editable-sample a.cancel').live('click', function (e) {
                 console.log("call a.cancel...");
                 e.preventDefault();
+                var nRow = $(this).parents('tr')[0];
                 if ($(this).attr("data-mode") == "new") {
-                    var nRow = $(this).parents('tr')[0];
                     oTable.fnDeleteRow(nRow);
                 } else {
+                    nEditing = nRow;
                     restoreRow(oTable, nEditing);
                     nEditing = null;
                 }
@@ -267,37 +278,19 @@ var EditableTable = function () {
             $('#editable-sample a.edit').live('click', function (e) {
                 console.log("call a.edit...");
                 e.preventDefault();
+                var current_row = $(this).parents('tr')[0];
+                var row_data = oTable.fnGetData(current_row);
+
                 var dataset_name = $('#dataset_name')[0].innerText;
-                var record_id = $(this).parents('tr').children()[0].innerText;
+                /*var record_id = $(this).parents('tr').children()[0].innerText;
                 var pcap_md5 = $(this).parents('tr').children('#pcap_md5')[0].innerText;
                 var payload_ascii = $(this).parents('tr').children('#payload_ascii')[0].innerText;
                 var word_segmentation_text = $(this).parents('tr').children('#word_segmentation_text')[0].innerText;
                 var word_tag_text = $(this).parents('tr').children('#word_tag_text')[0].innerText;
-                var captured_date = $(this).parents('tr').children('#captured_date')[0].innerText;
-            
-                $.ajax({
-                    type: "POST",
-                    url: "/aimales/dataset/" + dataset_name + "/edit/delete/" + record_id,
-                    data: {
-                        "pcap_md5": pcap_md5,
-                        "payload_ascii": payload_ascii,
-                        "word_segmentation_text": word_segmentation_text,
-                        "word_tag_text": word_tag_text,
-                        "captured_date": captured_date,
-                    },
-                    dataType: "json",
-                    complete: function(data, status){
-                       if(status == 'error'){
-                           status = true;
-                           return false;
-                       }else{
-                            alert("提交成功");
-                            status = false;
-                       }
-                    }
-                });
-                var nRow = $(this).parents('tr')[0];
-                if (nEditing !== null && nEditing != nRow) {
+                var captured_date = $(this).parents('tr').children('#captured_date')[0].innerText;*/
+
+                editRow(oTable, current_row);
+                /*if (nEditing !== null && nEditing != nRow) {
                     //restoreRow(oTable, nEditing);
                     editRow(oTable, nRow);
                     nEditing = nRow;
@@ -308,7 +301,7 @@ var EditableTable = function () {
                 } else {
                     editRow(oTable, nRow);
                     nEditing = nRow;
-                }
+                }*/
             });
         }
     };
