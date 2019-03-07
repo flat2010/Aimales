@@ -50,22 +50,23 @@ var EditableTable = function () {
                 if(!is_new){
                     exist_md5.remove(aData[1]);
                 }
+                
                 // ID
                 if(is_new){
-                    jqTds[0].innerHTML = '<input readonly="readonly" style="width:100%;" type="text" class="form-control small" value="' + (max_id).toString() + '">';
+                    jqTds[0].innerHTML = '<input id="id_input" readonly="readonly" style="width:100%;" type="text" class="form-control small" value="' + (max_id).toString() + '">';
                 }else{
-                    jqTds[0].innerHTML = '<input readonly="readonly" style="width:100%;" type="text" class="form-control small" value="' + aData[0] + '">';
+                    jqTds[0].innerHTML = '<input id="id_input" readonly="readonly" style="width:100%;" type="text" class="form-control small" value="' + aData[0] + '">';
                 }
                 // MD5
-                jqTds[1].innerHTML = '<input readonly="readonly" style="width:100%;" type="text" class="form-control small" placeholder="自动计算" value="' + aData[1] + '">';
+                jqTds[1].innerHTML = '<input id="pcap_md5_input" readonly="readonly" style="width:100%;" type="text" class="form-control small" placeholder="自动计算" value="' + aData[1] + '">';
                 // 负载内容
-                jqTds[2].innerHTML = '<input style="width:100%;" type="text" class="form-control small" value="' + aData[2] + '">';
+                jqTds[2].innerHTML = '<input id="payload_ascii_input" style="width:100%;" type="text" class="form-control small" value="' + aData[2] + '">';
                 // 分词结果
-                jqTds[3].innerHTML = '<input style="width:100%;" type="text" class="form-control small" value="' + aData[3] + '">';
+                jqTds[3].innerHTML = '<input id="word_segmentation_text_input" style="width:100%;" type="text" class="form-control small" value="' + aData[3] + '">';
                 // 标注结果
-                jqTds[4].innerHTML = '<input style="width:100%;" type="text" class="form-control small" value="' + aData[4] + '">';
+                jqTds[4].innerHTML = '<input id="word_tag_text_input" style="width:100%;" type="text" class="form-control small" value="' + aData[4] + '">';
                 // 时间戳
-                jqTds[5].innerHTML = '<input style="width:100%;" type="text" class="form-control small" value="' + aData[5] + '">';
+                jqTds[5].innerHTML = '<input id="captured_date_input" style="width:100%;" type="text" class="form-control small" value="' + aData[5] + '">';
                 // 编辑栏
                 if(is_new){
                     jqTds[6].innerHTML = '<a class="save" data-mode="new" href=""><i class="fa fa-save">保存&emsp;</i></a> <a data-mode="new" class="cancel" href=""><i class="fa fa-undo">取消</i></a>';
@@ -141,7 +142,7 @@ var EditableTable = function () {
                 console.log("call a.save...");
                 e.preventDefault();
 
-                var is_new = $(this).attr("data-mode") == "new";
+                var is_new = ($(this).attr("data-mode") == "new") ? true : false;
 
                 var nRow = oTable.fnGetPosition($(this).parents('tr')[0]);
                 var row_datas = oTable.fnGetData(nRow);
@@ -154,11 +155,11 @@ var EditableTable = function () {
                 var all_datas = {};
                 var dataset_name = $('#dataset_name')[0].innerText;
                 all_datas["datas"] = {
-                    "pcap_md5":  md5(row_datas[1]),
-                    "payload_ascii":  row_datas[2],
-                    "word_segmentation_text":  row_datas[3],
-                    "word_tag_text":  row_datas[4],
-                    "captured_date":  row_datas[5],
+                    "pcap_md5":  md5(($(this).parent().parent().children().children()[5]).value),
+                    "payload_ascii":  ($(this).parent().parent().children().children()[2]).value,
+                    "word_segmentation_text":  ($(this).parent().parent().children().children()[3]).value,
+                    "word_tag_text":  ($(this).parent().parent().children().children()[4]).value,
+                    "captured_date":  ($(this).parent().parent().children().children()[5]).value,
                 }
                 if (is_new) {
                     all_datas["url"] = "/aimales/edit_dataset/" + dataset_name + "/create/" + row_datas[0];
@@ -168,7 +169,6 @@ var EditableTable = function () {
                /* var a_node = $(this)[0];
                 var tr_node = $(this).parent().parent();
                 var td_nodes = tr_node[0].children;*/
-                
                 var new_row_values = [row_datas[0], 
                     all_datas["datas"]["pcap_md5"],
                     all_datas["datas"]["payload_ascii"], 
@@ -193,14 +193,14 @@ var EditableTable = function () {
 
                 new_tail_row.children[5].setAttribute("class", "center hidden-phone ");
                 new_tail_row.children[5].setAttribute("id", "captured_date");
-                console.log(all_datas["datas"]);
+
                 $.ajax({
                     type: "POST",
                     url: all_datas["url"],
                     data: all_datas["datas"],
                     dataType: "json",
                     complete: function(data, status){
-                        console.log(data["status"]);
+                        console.log(data);
                         if(data["status"] == 'error'){
                             alert(data["reason"]);
                             status = true;
@@ -212,7 +212,7 @@ var EditableTable = function () {
                             }*/
                         }
                         max_id += 1;
-                        exist_md5.push(pcap_md5);
+                        exist_md5.push(all_datas["datas"]["pcap_md5"]);
                         
                         oTable.fnDeleteRow(nRow);
                         oTable.fnDraw();

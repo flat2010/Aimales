@@ -37,11 +37,13 @@ def aimalesIndex(request):
 @login_required
 def recordOverview(request):
     return_result = getDatasets(dump_all_records=False)
+    print >> sys.stderr, return_result
     return render(request, 'record_overview.html', return_result)
 
 @login_required
 @csrf_exempt
 def editDataset(request, dataset, operation, record_id):
+    print >> sys.stderr, request.POST
     result = {}
     try:
         data_class = getattr(aimales_models, dataset)

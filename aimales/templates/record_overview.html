@@ -609,6 +609,7 @@
                         <table class="table table-striped table-hover table-bordered" id="editable-sample">
                            <thead>
                               <tr>
+                                <th></th>
                                  <th>ID</th>
                                  <th class="hidden-phone">MD5</th>
                                  <th class="hidden-phone">负载内容</th>
@@ -621,6 +622,7 @@
                            <tbody id="editable_table_body">
                                {% for record in records %}
                                 <tr class="">
+                                    <td class="center"><img id="show_record_details_button_{{record.id}}" onclick="hide_or_display_details(this);" src="{% static 'aimales/assets/advanced-datatable/examples/examples_support/details_open.png' %}"></img></td>
                                     <td>{{record.id}}</td>
                                     <td class="hidden-phone" id="pcap_md5">{{record.pcap_md5}}</td>
                                     <td class="hidden-phone" id="payload_ascii">{{record.payload_ascii}}</td>
@@ -631,6 +633,90 @@
                                     <a class="edit" href="javascript:;"><i class="fa fa-pencil-square-o">编辑&emsp;</i></a>
                                     <a class="delete" href="javascript:;"><i class="fa fa-times-circle">删除</i></a>
                                     </td>
+                                </tr>
+                                <tr id="record_details_{{record.id}}_tr" style="display: none;">
+                                    <td class="details" colspan="8">
+                                            <table cellpadding="5" cellspacing="0" border="0" style="padding-left:20px;">
+                                            <tbody id="record_details_{{record.id}}_tbody">
+                                                <tr>
+                                                    <td>是否有效:{{record.is_valid}}</td>
+                                                    <td>
+                                                        <select id="is_valid_input_{{record.id}}" >
+                                                            {% if record.is_valid %}
+                                                                <option value ="0">否</option>
+                                                                <option value ="1" selected="selected">是</option>
+                                                            {% else %}
+                                                                <option value ="0" selected="selected">否</option>
+                                                                <option value ="1">是</option>
+                                                            {% endif %}
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>是否已分词:</td>
+                                                    <td>
+                                                        <select id="is_segmented_input_{{record.id}}" >
+                                                            {% if record.is_segmented %}
+                                                                <option value ="0">否</option>
+                                                                <option value ="1" selected="selected">是</option>
+                                                            {% else %}
+                                                                <option value ="0" selected="selected">否</option>
+                                                                <option value ="1">是</option>
+                                                            {% endif %}
+                                                        </select>
+                                                    </td>
+                                                    <td>是否已标注:</td>
+                                                    <td>
+                                                        <select id="is_tagged_input_{{record.id}}" >
+                                                                {% if record.is_tagged %}
+                                                                    <option value ="0">否</option>
+                                                                    <option value ="1" selected="selected">是</option>
+                                                                {% else %}
+                                                                    <option value ="0" selected="selected">否</option>
+                                                                    <option value ="1">是</option>
+                                                                {% endif %}
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>负载大小:</td>
+                                                    <td><input id="payload_size_input_{{record.id}}" size="15" value="{{record.payload_size}}"></input></td>
+                                                    <td>相关样本:</td>
+                                                    <td><input id="correlation_record_count_input_{{record.id}}" size="15" value="{{record.correlation_record_count}}"></input></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>标注数量:</td>
+                                                    <td><input id="word_tag_count_input_{{record.id}}" size="15" value="{{record.word_tag_count}}"></input></td>
+                                                    <td>分词数量:</td>
+                                                    <td><input id="word_segmentation_count_input_{{record.id}}" size="15" value="{{record.word_segmentation_count}}"></input></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>创建日期:</td>
+                                                    <td><input id="add_date_input_{{record.id}}" size="18" value='{{record.add_date|date:"Y-m-d H:i:s"}}'></input></td>
+                                                    <td>更新日期:</td>
+                                                    <td><input readonly="readonly" id="update_date_input_{{record.id}}" size="18" value='{{record.update_date|date:"Y-m-d H:i:s"}}'></input></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>分词日期:</td>
+                                                    <td><input readonly="readonly" id="last_segmentation_date_input_{{record.id}}" size="18" value='{{record.last_segmentation_date|date:"Y-m-d H:i:s"}}'></input></td>
+                                                    <td>标注日期:</td>
+                                                    <td><input readonly="readonly" id="last_tag_date_input_{{record.id}}" size="18" value='{{record.last_tag_date|date:"Y-m-d H:i:s"}}'></input></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>数据包名:</td>
+                                                    <td><input id="pcap_name_input_{{record.id}}" size="30" value="{{record.pcap_name}}"></input></td>
+                                                    <td>样本路径:</td>
+                                                    <td><input id="pcap_path_input_{{record.id}}" size="30" value="{{record.pcap_path}}"></input></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>负载二进制:</td>
+                                                    <td><textarea id="payload_binary_input_{{record.id}}" rows="4" class="  form-control">{{record.payload_binary}}</textarea></td>
+                                                    <td>数据备注:</td>
+                                                    <td><textarea id="remarks_input_{{record.id}}" rows="4" class="  form-control">{{record.remarks}}</textarea></td>
+                                                </tr>
+                                            </tbody>
+                                            </table>
+                                        </td>
                                 </tr>
                                 {% endfor %}
                            </tbody>
@@ -672,6 +758,18 @@
          jQuery(document).ready(function() {
              EditableTable.init();
          });
+
+         function hide_or_display_details(details_button){
+            var record_id = $(details_button).attr("id");
+            record_id = record_id.split("_").slice(-1)[0];
+            var detail_button_id = "record_details_" + record_id + "_tr";
+            var details = document.getElementById(detail_button_id);
+            if(details.getAttribute("style") == "display: none;"){
+                details.setAttribute("style", "display: show;");
+            }else{
+                details.setAttribute("style", "display: none;");
+            }
+         }
       </script>
 	  <!-- END JS --> 
    </body>
