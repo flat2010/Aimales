@@ -621,26 +621,26 @@
                            </thead>
                            <tbody id="editable_table_body">
                                {% for record in records %}
-                                <tr class="">
+                                <tr class="default_display_record_info" >
                                     <td class="center"><img id="show_record_details_button_{{record.id}}" onclick="hide_or_display_details(this);" src="{% static 'aimales/assets/advanced-datatable/examples/examples_support/details_open.png' %}"></img></td>
-                                    <td>{{record.id}}</td>
+                                    <td class="record_id">{{record.id}}</td>
                                     <td class="hidden-phone" id="pcap_md5">{{record.pcap_md5}}</td>
                                     <td class="hidden-phone" id="payload_ascii">{{record.payload_ascii}}</td>
                                     <td class="center hidden-phone" id="word_segmentation_text">{{record.word_segmentation_text}}</td>
                                     <td class="center hidden-phone" id="word_tag_text">{{record.word_tag_text}}</td>
                                     <td class="center hidden-phone" id="captured_date">{{record.captured_date|date:"Y-m-d H:i:s"}}</td>
-                                    <td>
+                                    <td class="operations">
                                     <a class="edit" href="javascript:;"><i class="fa fa-pencil-square-o">编辑&emsp;</i></a>
                                     <a class="delete" href="javascript:;"><i class="fa fa-times-circle">删除</i></a>
                                     </td>
                                 </tr>
-                                <tr id="record_details_{{record.id}}_tr" style="display: none;">
+                                <tr class="default_hidden_record_info" id="record_details_{{record.id}}_tr" style="display: none;">
                                     <td class="details" colspan="8">
                                             <table cellpadding="5" cellspacing="0" border="0" style="padding-left:20px;">
                                             <tbody id="record_details_{{record.id}}_tbody">
                                                 <tr>
-                                                    <td>是否有效:{{record.is_valid}}</td>
-                                                    <td>
+                                                    <td class="is_valid_label">是否有效:{{record.is_valid}}</td>
+                                                    <td class="is_valid_options">
                                                         <select id="is_valid_input_{{record.id}}" >
                                                             {% if record.is_valid %}
                                                                 <option value ="0">否</option>
@@ -653,8 +653,8 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td>是否已分词:</td>
-                                                    <td>
+                                                    <td class="">是否已分词:</td>
+                                                    <td class="">
                                                         <select id="is_segmented_input_{{record.id}}" >
                                                             {% if record.is_segmented %}
                                                                 <option value ="0">否</option>
@@ -665,8 +665,8 @@
                                                             {% endif %}
                                                         </select>
                                                     </td>
-                                                    <td>是否已标注:</td>
-                                                    <td>
+                                                    <td class="is_tagged_label">是否已标注:</td>
+                                                    <td class="">
                                                         <select id="is_tagged_input_{{record.id}}" >
                                                                 {% if record.is_tagged %}
                                                                     <option value ="0">否</option>
@@ -679,40 +679,40 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td>负载大小:</td>
-                                                    <td><input id="payload_size_input_{{record.id}}" size="15" value="{{record.payload_size}}"></input></td>
-                                                    <td>相关样本:</td>
-                                                    <td><input id="correlation_record_count_input_{{record.id}}" size="15" value="{{record.correlation_record_count}}"></input></td>
+                                                    <td class="">负载大小:</td>
+                                                    <td class=""><input id="payload_size_input_{{record.id}}" size="15" value="{{record.payload_size}}"></input></td>
+                                                    <td class="">相关样本:</td>
+                                                    <td class=""><input id="correlation_record_count_input_{{record.id}}" size="15" value="{{record.correlation_record_count}}"></input></td>
                                                 </tr>
                                                 <tr>
-                                                    <td>标注数量:</td>
-                                                    <td><input id="word_tag_count_input_{{record.id}}" size="15" value="{{record.word_tag_count}}"></input></td>
-                                                    <td>分词数量:</td>
-                                                    <td><input id="word_segmentation_count_input_{{record.id}}" size="15" value="{{record.word_segmentation_count}}"></input></td>
+                                                    <td class="">标注数量:</td>
+                                                    <td class=""><input id="word_tag_count_input_{{record.id}}" size="15" value="{{record.word_tag_count}}"></input></td>
+                                                    <td class="">分词数量:</td>
+                                                    <td class=""><input id="word_segmentation_count_input_{{record.id}}" size="15" value="{{record.word_segmentation_count}}"></input></td>
                                                 </tr>
                                                 <tr>
-                                                    <td>创建日期:</td>
-                                                    <td><input id="add_date_input_{{record.id}}" size="18" value='{{record.add_date|date:"Y-m-d H:i:s"}}'></input></td>
-                                                    <td>更新日期:</td>
-                                                    <td><input readonly="readonly" id="update_date_input_{{record.id}}" size="18" value='{{record.update_date|date:"Y-m-d H:i:s"}}'></input></td>
+                                                    <td class="">创建日期:</td>
+                                                    <td class=""><input id="add_date_input_{{record.id}}" size="18" value='{{record.add_date|date:"Y-m-d H:i:s"}}'></input></td>
+                                                    <td class="">更新日期:</td>
+                                                    <td class=""><input readonly="readonly" id="update_date_input_{{record.id}}" size="18" value='{{record.update_date|date:"Y-m-d H:i:s"}}'></input></td>
                                                 </tr>
                                                 <tr>
-                                                    <td>分词日期:</td>
-                                                    <td><input readonly="readonly" id="last_segmentation_date_input_{{record.id}}" size="18" value='{{record.last_segmentation_date|date:"Y-m-d H:i:s"}}'></input></td>
-                                                    <td>标注日期:</td>
-                                                    <td><input readonly="readonly" id="last_tag_date_input_{{record.id}}" size="18" value='{{record.last_tag_date|date:"Y-m-d H:i:s"}}'></input></td>
+                                                    <td class="">分词日期:</td>
+                                                    <td class=""><input readonly="readonly" id="last_segmentation_date_input_{{record.id}}" size="18" value='{{record.last_segmentation_date|date:"Y-m-d H:i:s"}}'></input></td>
+                                                    <td class="">标注日期:</td>
+                                                    <td class=""><input readonly="readonly" id="last_tag_date_input_{{record.id}}" size="18" value='{{record.last_tag_date|date:"Y-m-d H:i:s"}}'></input></td>
                                                 </tr>
                                                 <tr>
-                                                    <td>数据包名:</td>
-                                                    <td><input id="pcap_name_input_{{record.id}}" size="30" value="{{record.pcap_name}}"></input></td>
-                                                    <td>样本路径:</td>
-                                                    <td><input id="pcap_path_input_{{record.id}}" size="30" value="{{record.pcap_path}}"></input></td>
+                                                    <td class="">数据包名:</td>
+                                                    <td class=""><input id="pcap_name_input_{{record.id}}" size="30" value="{{record.pcap_name}}"></input></td>
+                                                    <td class="">样本路径:</td>
+                                                    <td class=""><input id="pcap_path_input_{{record.id}}" size="30" value="{{record.pcap_path}}"></input></td>
                                                 </tr>
                                                 <tr>
-                                                    <td>负载二进制:</td>
-                                                    <td><textarea id="payload_binary_input_{{record.id}}" rows="4" class="  form-control">{{record.payload_binary}}</textarea></td>
-                                                    <td>数据备注:</td>
-                                                    <td><textarea id="remarks_input_{{record.id}}" rows="4" class="  form-control">{{record.remarks}}</textarea></td>
+                                                    <td class="">负载二进制:</td>
+                                                    <td class=""><textarea id="payload_binary_input_{{record.id}}" rows="4" class="  form-control">{{record.payload_binary}}</textarea></td>
+                                                    <td class="">数据备注:</td>
+                                                    <td class=""><textarea id="remarks_input_{{record.id}}" rows="4" class="  form-control">{{record.remarks}}</textarea></td>
                                                 </tr>
                                             </tbody>
                                             </table>
@@ -764,10 +764,24 @@
             record_id = record_id.split("_").slice(-1)[0];
             var detail_button_id = "record_details_" + record_id + "_tr";
             var details = document.getElementById(detail_button_id);
+            
+            var record_button_id = "show_record_details_button_" + record_id;
+            var record_button = document.getElementById(record_button_id);
             if(details.getAttribute("style") == "display: none;"){
                 details.setAttribute("style", "display: show;");
+                var new_node = document.createElement("i");
+                new_node.setAttribute("class", "fa fa-minus-circle");
+                new_node.setAttribute("onclick", "hide_or_display_details(this);");
+                new_node.setAttribute("style", "font-size: 22px;color:#53A0C5;");
+                new_node.setAttribute("id", record_button_id);
+                record_button.parentNode.replaceChild(new_node, record_button);
             }else{
                 details.setAttribute("style", "display: none;");
+                var new_node = document.createElement("img");
+                new_node.setAttribute("src", "/static/aimales/assets/advanced-datatable/examples/examples_support/details_open.png");
+                new_node.setAttribute("onclick", "hide_or_display_details(this);");
+                new_node.setAttribute("id", record_button_id);
+                record_button.parentNode.replaceChild(new_node, record_button);
             }
          }
       </script>
