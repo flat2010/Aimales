@@ -37,7 +37,9 @@ def aimalesIndex(request):
 @login_required
 def recordOverview(request):
     return_result = getDatasets(dump_all_records=False)
-    print >> sys.stderr, return_result
+    # provide a json-serialised records copy to parse details
+    return_result['jsoned_records'] = json.dumps(return_result['records'], cls=DateTimeJsonEncoder);
+    #print >> sys.stderr, 11111111111, return_result
     return render(request, 'record_overview.html', return_result)
 
 @login_required

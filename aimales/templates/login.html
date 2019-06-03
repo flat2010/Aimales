@@ -178,7 +178,7 @@
 	                ErroAlert('请输入密码');
 	            } else if (code == '' || code.length != 4) {
 	                ErroAlert('输入验证码');
-	            } else if (!checkCode(code)){
+	            } else if (checkCode(code)){
                     ErroAlert("验证码有误");
                 } else {
 	                //认证中..

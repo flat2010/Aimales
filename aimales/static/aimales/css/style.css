@@ -2209,6 +2209,11 @@ ul.ft-link li a i {
 	color: #047899;
 }
 
+.fontawesome-icon-list i {
+    font-size: 25px;
+    padding-right: 10px;
+}
+
 .fontawesome-icon-list a:hover {
 	color: #1c5c6f;
 }

@@ -634,22 +634,23 @@
                                     <a class="delete" href="javascript:;"><i class="fa fa-times-circle">删除</i></a>
                                     </td>
                                 </tr>
+                                <!--
                                 <tr class="default_hidden_record_info" id="record_details_{{record.id}}_tr" style="display: none;">
                                     <td class="details" colspan="8">
-                                            <table cellpadding="5" cellspacing="0" border="0" style="padding-left:20px;">
+                                        <table cellpadding="5" cellspacing="0" border="0" style="padding-left:20px;">
                                             <tbody id="record_details_{{record.id}}_tbody">
                                                 <tr>
                                                     <td class="is_valid_label">是否有效:{{record.is_valid}}</td>
                                                     <td class="is_valid_options">
-                                                        <select id="is_valid_input_{{record.id}}" >
-                                                            {% if record.is_valid %}
-                                                                <option value ="0">否</option>
-                                                                <option value ="1" selected="selected">是</option>
-                                                            {% else %}
-                                                                <option value ="0" selected="selected">否</option>
-                                                                <option value ="1">是</option>
-                                                            {% endif %}
-                                                        </select>
+                                                    <select id="is_valid_input_{{record.id}}" >
+                                                        {% if record.is_valid %}
+                                                            <option value ="0">否</option>
+                                                            <option value ="1" selected="selected">是</option>
+                                                        {% else %}
+                                                            <option value ="0" selected="selected">否</option>
+                                                            <option value ="1">是</option>
+                                                        {% endif %}
+                                                    </select>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -715,9 +716,10 @@
                                                     <td class=""><textarea id="remarks_input_{{record.id}}" rows="4" class="  form-control">{{record.remarks}}</textarea></td>
                                                 </tr>
                                             </tbody>
-                                            </table>
-                                        </td>
-                                </tr>
+                                        </table>
+                                    </td>
+                                </tr>    
+                                -->
                                 {% endfor %}
                            </tbody>
                         </table>
@@ -752,39 +754,168 @@
 		<script src="{% static 'aimales/js/respond.min.js' %}" ></script><!-- RESPOND JS  -->
 		<script src="{% static 'aimales/js/common-scripts.js' %}" ></script><!-- BASIC COMMON JS  -->
 		<script src="{% static 'aimales/js/editable-table.js' %}" ></script><!-- EDITABLE TABLE JS  -->
-		<script src="{% static 'aimales/js/md5.min.js' %}" ></script><!-- MD5 JS  -->
-      <script >
-	     <!-- EDITABLE TABLE FUNCTION  -->
-         jQuery(document).ready(function() {
-             EditableTable.init();
-         });
+        <script src="{% static 'aimales/js/md5.min.js' %}" ></script><!-- MD5 JS  -->
+        <script  type="text/javascript">
+            var details_fields = ["is_valid", "is_segmented", 
+                                  "is_tagged", "payload_size",
+                                  "correlation_record_count", "word_tag_count", 
+                                  "word_segmentation_count", "add_date",
+                                  "add_date", "update_date", 
+                                  "last_segmentation_date", "last_tag_date",
+                                  "pcap_name", "pcap_path", 
+                                  "payload_binary", "remarks"]
+            var record_details = {};
+            // 因为records传递过来的数据是没有用json序列化的，解析会报错
+            var all_records = "{{ jsoned_records | escapejs }}";
+            all_records = JSON.parse(all_records);
 
-         function hide_or_display_details(details_button){
-            var record_id = $(details_button).attr("id");
-            record_id = record_id.split("_").slice(-1)[0];
-            var detail_button_id = "record_details_" + record_id + "_tr";
-            var details = document.getElementById(detail_button_id);
-            
-            var record_button_id = "show_record_details_button_" + record_id;
-            var record_button = document.getElementById(record_button_id);
-            if(details.getAttribute("style") == "display: none;"){
-                details.setAttribute("style", "display: show;");
-                var new_node = document.createElement("i");
-                new_node.setAttribute("class", "fa fa-minus-circle");
-                new_node.setAttribute("onclick", "hide_or_display_details(this);");
-                new_node.setAttribute("style", "font-size: 22px;color:#53A0C5;");
-                new_node.setAttribute("id", record_button_id);
-                record_button.parentNode.replaceChild(new_node, record_button);
-            }else{
-                details.setAttribute("style", "display: none;");
-                var new_node = document.createElement("img");
-                new_node.setAttribute("src", "/static/aimales/assets/advanced-datatable/examples/examples_support/details_open.png");
-                new_node.setAttribute("onclick", "hide_or_display_details(this);");
-                new_node.setAttribute("id", record_button_id);
-                record_button.parentNode.replaceChild(new_node, record_button);
+            for(var index=0;index < all_records.length;index++){
+                var temp = {};
+                for(var idx=0;idx < details_fields.length;idx++){
+                    temp[details_fields[idx]] = all_records[index][details_fields[idx]];
+                }
+                record_details[all_records[index]["id"]] = temp;
             }
-         }
-      </script>
+
+            <!-- EDITABLE TABLE FUNCTION  -->
+            jQuery(document).ready(function() {
+                EditableTable.init();
+            });
+
+            function hide_or_display_details(details_button){
+                var record_id = $(details_button).attr("id");
+                record_id = record_id.split("_").slice(-1)[0];
+
+                var tbody = document.getElementById("editable_table_body");
+                var is_displayed = true;
+
+                // 根据是否存在对应的节点判断是显示/隐藏细节信息
+                var hidden_info_node = document.getElementById("details_info_id_" + record_id);
+                if(null != hidden_info_node){
+                    var hidden_node_index = [].indexOf.call(tbody.children, hidden_info_node);
+                    if(-1 != hidden_node_index){
+                        tbody.deleteRow(hidden_node_index);
+                        is_displayed = false;
+                    }
+                }else{
+                    var target_node = details_button.parentNode.parentNode;
+                    var target_node_index = [].indexOf.call(tbody.children, target_node);
+                    if(-1 != target_node_index){
+                        var new_detail_tr_node = tbody.insertRow(target_node_index + 1);
+                        new_detail_tr_node.innerHTML = generate_details_info_template(record_id);
+                        new_detail_tr_node.setAttribute("id", "details_info_id_" + record_id);
+                        new_detail_tr_node.setAttribute("class", "default_hidden_details_info");
+                        is_displayed = true;
+                    }
+                }
+
+                if(is_displayed){
+                    var new_button = document.createElement("i");
+                    new_button.setAttribute("class", "fa fa-minus-circle");
+                    new_button.setAttribute("onclick", "hide_or_display_details(this);");
+                    new_button.setAttribute("style", "font-size: 22px;color:#53A0C5;");
+                    new_button.setAttribute("id", "show_record_details_button_" + record_id);
+                    new_button.setAttribute("onclick", "hide_or_display_details(this);");
+                    details_button.parentNode.replaceChild(new_button, details_button);
+                }else{
+                    var new_button = document.createElement("img");
+                    new_button.setAttribute("src", "/static/aimales/assets/advanced-datatable/examples/examples_support/details_open.png");
+                    new_button.setAttribute("onclick", "hide_or_display_details(this);");
+                    new_button.setAttribute("id", "show_record_details_button_" + record_id);
+                    details_button.parentNode.replaceChild(new_button, details_button);
+                }
+            }
+            
+            // 生成要在界面上显示的详细信息的html代码
+            function generate_details_info_template(id){
+                var details_info_code = "";
+                details_info_code += '<tr class="default_hidden_record_info" id="record_details_' + id + '_tr" style="display: show;">';
+                details_info_code += '<td class="details" colspan="8">\
+                        <table cellpadding="5" cellspacing="0" border="0" style="padding-left:20px;">\
+                            <tbody id="record_details_' + id + '_tbody">\
+                                <tr>\
+                                    <td class="is_valid_label">是否有效:' + record_details[id]["is_valid"] + '</td>\
+                                    <td class="is_valid_options">\
+                                    <select id="is_valid_input_' + id + '" >';
+                if(record_details[id]["is_valid"]){
+                    details_info_code += '<option value ="0">否</option>\
+                                          <option value ="1" selected="selected">是</option>';
+                }else{
+                    details_info_code += '<option value ="0" selected="selected">否</option>\
+                                            <option value ="1">是</option>';
+                }
+                details_info_code += '</select>\
+                                    </td>\
+                                </tr>\
+                                <tr>\
+                                    <td class="">是否已分词:</td>\
+                                    <td class="">\
+                                        <select id="is_segmented_input_' + id + '" >';
+                if(record_details[id]["is_segmented"]){
+                    details_info_code += '<option value ="0">否</option>\
+                                          <option value ="1" selected="selected">是</option>';
+                }else{
+                    details_info_code += '<option value ="0" selected="selected">否</option>\
+                                          <option value ="1">是</option>';
+                }
+                details_info_code += '</select>\
+                                    </td>\
+                                    <td class="is_tagged_label">是否已标注:</td>\
+                                    <td class="">\
+                                        <select id="is_tagged_input_' + id + '" >';
+                if(record_details[id]["is_tagged"]){
+                    details_info_code += '<option value ="0">否</option>';
+                    details_info_code += '<option value ="1" selected="selected">是</option>';
+                }else{
+                    details_info_code += '<option value ="0" selected="selected">否</option>';
+                    details_info_code += '<option value ="1">是</option>';
+                }
+                details_info_code += '</select>\
+                                    </td>\
+                                </tr>\
+                                <tr>\
+                                    <td class="">负载大小:</td>\
+                                    <td class=""><input id="payload_size_input_' + id + '" size="15" value="' + record_details[id]["payload_size"] + '"></input></td>\
+                                    <td class="">相关样本:</td>\
+                                    <td class=""><input id="correlation_record_count_input_' + id + '" size="15" value="' + record_details[id]["correlation_record_count"] + '"></input></td>\
+                                </tr>\
+                                <tr>\
+                                    <td class="">标注数量:</td>\
+                                    <td class=""><input id="word_tag_count_input_' + id + '" size="15" value="' + record_details[id]["word_tag_count"] + '"></input></td>\
+                                    <td class="">分词数量:</td>\
+                                    <td class=""><input id="word_segmentation_count_input_' + id + '" size="15" value="' + record_details[id]["word_segmentation_count"] + '"></input></td>\
+                                </tr>\
+                                <tr>\
+                                    <td class="">创建日期:</td>\
+                                    <td class=""><input id="add_date_input_' + id + '" size="18" value="' + record_details[id]["add_date"] + '"></input></td>\
+                                    <td class="">更新日期:</td>\
+                                    <td class=""><input readonly="readonly" id="update_date_input_' + id + '" size="18" value="' + record_details[id]["update_date"] + '"></input></td>\
+                                </tr>\
+                                <tr>\
+                                    <td class="">分词日期:</td>\
+                                    <td class=""><input readonly="readonly" id="last_segmentation_date_input_' + id + '" size="18" value="' + record_details[id]["last_segmentation_date"] + '"></input></td>\
+                                    <td class="">标注日期:</td>\
+                                    <td class=""><input readonly="readonly" id="last_tag_date_input_' + id + '" size="18" value="' + record_details[id]["last_tag_date"] + '"></input></td>\
+                                </tr>\
+                                <tr>\
+                                    <td class="">数据包名:</td>\
+                                    <td class=""><input id="pcap_name_input_' + id + '" size="30" value="' + record_details[id]["pcap_name"] + '"></input></td>\
+                                    <td class="">样本路径:</td>\
+                                    <td class=""><input id="pcap_path_input_' + id + '" size="30" value="' + record_details[id]["pcap_path"] + '"></input></td>\
+                                </tr>\
+                                <tr>\
+                                    <td class="">负载二进制:</td>\
+                                    <td class=""><textarea id="payload_binary_input_' + id + '" rows="4" class="  form-control">' + record_details[id]["payload_binary"] + '</textarea></td>\
+                                    <td class="">数据备注:</td>\
+                                    <td class=""><textarea id="remarks_input_' + id + '" rows="4" class="  form-control">' + record_details[id]["remarks"] + '</textarea></td>\
+                                </tr>\
+                            </tbody>\
+                        </table>\
+                    </td>\
+                </tr>';
+                return details_info_code;
+            }
+        </script>
 	  <!-- END JS --> 
    </body>
 </html>
