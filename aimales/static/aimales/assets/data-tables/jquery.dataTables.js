@@ -219,7 +219,7 @@
             return iRow;
         }
         function _fnGatherData(oSettings) {
-            console.log(oSettings.aoData);
+            //console.log(oSettings.aoData);
             var iLoop, i, iLen, j, jLen, jInner, nTds, nTrs, nTd, nTr, aLocalData, iThisIndex, iRow, iRows, iColumn, iColumns, sNodeName, oCol, oData;
             var hiden_cols = 0;
             var display_cols = 0;
@@ -229,7 +229,7 @@
                     if (nTr.nodeName.toUpperCase() == "TR") {
                         if((nTr.getAttribute("class") == "default_hidden_record_info") && (!hiden_cols)){
                             // 由于详细信息是多个字段并排一行，这里只能获取到有多少个并排行
-                            console.log(nTr.childNodes[1].childNodes[1].childNodes[1].children);
+                            //console.log(nTr.childNodes[1].childNodes[1].childNodes[1].children);
                             hiden_cols = nTr.childNodes[1].childNodes[1].childNodes[1].children.length;
                         }else if(nTr.getAttribute("class") == "default_display_record_info" && (!display_cols)){
                             display_cols = nTr.children.length;
@@ -270,11 +270,11 @@
                     nTd = nTd.nextSibling;
                 }
             }
-            console.log("数据行数：", oSettings.aoData.length);
-            console.log("数据列数：", oSettings.aoColumns.length);
-            console.log("每条数据隐藏部分的列数：", hiden_cols);
-            console.log("TD内容：", nTds);
-            for (iColumn = 0, iColumns = display_cols; iColumn < iColumns; iColumn++) {
+            //console.log("数据行数：", oSettings.aoData.length);
+            //console.log("数据列数：", oSettings.aoColumns.length);
+            //console.log("每条数据隐藏部分的列数：", hiden_cols);
+            //console.log("TD内容：", nTds);
+            for (iColumn = 0, iColumns = oSettings.aoColumns.length; iColumn < iColumns; iColumn++) {
                 //console.log("正在处理表格第：", iColumn, "列的数据");
                 oCol = oSettings.aoColumns[iColumn];
                 if (oCol.sTitle === null) {
@@ -288,11 +288,11 @@
                 if (bAutoType || bRender || bClass || !bVisible) {
                     // oSettings.aoData.length
                     var displayed_row_count = 0;
-                    for (iRow = 0, iRows = oSettings.aoData.length; iRow < iRows - 1;iRow= iRow + 2, displayed_row_count++) {
+                    for (iRow = 0, iRows = oSettings.aoData.length; iRow < iRows;iRow++, displayed_row_count++) {
                         //console.log("正在显示第：", displayed_row_count, "行，", iColumn, "列的数据。");
                         //console.log("nTds索引号：", (displayed_row_count * (iColumns)) + iColumn);
                         oData = oSettings.aoData[iRow];
-                        nCell = nTds[(displayed_row_count * (iColumns)) + iColumn];
+                        nCell = nTds[(iRow * (iColumns)) + iColumn];
                         if (bAutoType && oCol.sType != 'string') {
                             sValType = _fnGetCellData(oSettings, iRow, iColumn, 'type');
                             if (sValType !== '') {
@@ -360,15 +360,15 @@
             return out;
         }
         function _fnGetCellData(oSettings, iRow, iCol, sSpecific) {
-            console.log("GetCellData: row@", iRow, ", col@", iCol, ", specific@", sSpecific);
+            //console.log("GetCellData: row@", iRow, ", col@", iCol, ", specific@", sSpecific);
             var sData;
             var oCol = oSettings.aoColumns[iCol];
             var oData = oSettings.aoData[iRow]._aData;
-            console.log("aoColumns：", oSettings.aoColumns);
-            console.log("aoData：", oSettings.aoData[iRow]);
+            //console.log("aoColumns：", oSettings.aoColumns);
+            //console.log("aoData：", oSettings.aoData[iRow]);
             if ((sData = oCol.fnGetData(oData, sSpecific)) === undefined) {
                 if (oSettings.iDrawError != oSettings.iDraw && oCol.sDefaultContent === null) {
-                    console.log(oSettings, 0, "Requested unknown parameter " + (typeof oCol.mData == 'function' ? '{mData function}': "'" + oCol.mData + "'") + " from the data source for row " + iRow);
+                    //console.log(oSettings, 0, "Requested unknown parameter " + (typeof oCol.mData == 'function' ? '{mData function}': "'" + oCol.mData + "'") + " from the data source for row " + iRow);
                     _fnLog(oSettings, 0, "Requested unknown parameter " + (typeof oCol.mData == 'function' ? '{mData function}': "'" + oCol.mData + "'") + " from the data source for row " + iRow);
                     oSettings.iDrawError = oSettings.iDraw;
                 }
@@ -1323,7 +1323,7 @@
             return str.replace(/_START_/g, sStart).replace(/_END_/g, sEnd).replace(/_TOTAL_/g, sTotal).replace(/_MAX_/g, sMax);
         }
         function _fnInitialise(oSettings) {
-            console.log("Entering _fnInitialise function...");
+            //console.log("Entering _fnInitialise function...");
             var i, iLen, iAjaxStart = oSettings.iInitDisplayStart;
             if (oSettings.bInitialised === false) {
                 setTimeout(function() {
@@ -1348,18 +1348,14 @@
                 }
             }
             if (oSettings.oFeatures.bSort) {
-                console.log(444444444444444);
                 _fnSort(oSettings);
             } else if (oSettings.oFeatures.bFilter) {
-                console.log(5555555555555555);
                 _fnFilterComplete(oSettings, oSettings.oPreviousSearch);
             } else {
-                console.log(6666666666666666);
                 oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
                 _fnCalculateEnd(oSettings);
                 _fnDraw(oSettings);
             }
-            console.log(999999999999);
             if (oSettings.sAjaxSource !== null && !oSettings.oFeatures.bServerSide) {
                 var aoData = [];
                 _fnServerParams(oSettings, aoData);
@@ -2042,7 +2038,7 @@
             return (w1 - w2);
         }
         function _fnSort(oSettings, bApplyClasses) {
-            console.log("Entering _fnSort...");
+            //console.log("Entering _fnSort...");
             var i, iLen, j, jLen, k, kLen, sDataType, nTh, aaSort = [],
             aiOrig = [],
             oSort = DataTable.ext.oSort,
