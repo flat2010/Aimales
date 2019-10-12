@@ -782,7 +782,8 @@
                 EditableTable.init();
             });
 
-            function hide_or_display_details(details_button){
+            function hide_or_display_details(details_button, edit_flag=false){
+                // edit_flag判断是编辑还是只是展示详细信息页面
                 var record_id = $(details_button).attr("id");
                 record_id = record_id.split("_").slice(-1)[0];
 
@@ -808,6 +809,8 @@
                         is_displayed = true;
                     }
                 }
+
+                // 若只是显示详细信息，需要设置readonly模式
 
                 if(is_displayed){
                     var new_button = document.createElement("i");
