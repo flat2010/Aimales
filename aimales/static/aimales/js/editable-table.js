@@ -29,15 +29,16 @@ var EditableTable = function () {
 
             // 最大记录ID号，用来创建新纪录
             var max_id = 1;
-            $("table tr td:first-child").each(function(i){
+            /*$("table tr:last-child td:first-child").each(function(i){
                 if(parseInt($(this).text()) > max_id){
                     max_id = parseInt($(this).text());
                 }
-            });
+            });*/
+            max_id = parseInt($("table tr:last-child td:nth-child(1)").innerText);
             max_id += 1;
 
             
-            // 现在前端做一次校验，确保没有重复的负载数据
+            // 先在前端做一次校验，确保没有重复的负载数据
             var exist_md5 = new Array();
             $("table tr td:nth-child(2)").each(function(){
                 exist_md5.push($(this).text());
@@ -50,28 +51,136 @@ var EditableTable = function () {
                 if(!is_new){
                     exist_md5.remove(aData[1]);
                 }
+
+                if(is_new){
+                    var new_rec_id = (max_id).toString();
+                    // 展开详细信息的按钮
+                    jqTds[0].innerHTML = '<i class="fa fa-minus-circle" onclick="hide_or_display_details(this);" style="font-size: 22px;color:#53A0C5;" id="show_record_details_button_' + new_rec_id + '"></i>';
+                    jqTds[0].setAttribute("class", "center  sorting_1");
+                    // ID
+                    jqTds[1].setAttribute("class", "record_id");
+                    jqTds[1].innerHTML = new_rec_id;
+                    // MD5
+                    jqTds[2].setAttribute("class", "hidden-phone");
+                    jqTds[2].setAttribute("id", "pcap_md5");
+                    jqTds[2].innerHTML = '<input id="pcap_md5_input" readonly="readonly" style="width:100%;" type="text" class="form-control small" placeholder="无需填写，自动计算" value="' + aData[2] + '">';
+                    // 负载内容
+                    jqTds[3].setAttribute("class", "hidden-phone");
+                    jqTds[3].setAttribute("id", "payload_ascii");
+                    jqTds[3].innerHTML = '<input id="payload_ascii_input" style="width:100%;" type="text" class="form-control small" value="">';
+                    // 分词结果
+                    jqTds[4].setAttribute("class", "center hidden-phone");
+                    jqTds[4].setAttribute("id", "word_segmentation_text");
+                    jqTds[4].innerHTML = '<input id="word_segmentation_text_input" style="width:100%;" type="text" class="form-control small" value="">';
+                    // 标注结果
+                    jqTds[5].setAttribute("class", "center hidden-phone");
+                    jqTds[5].setAttribute("id", "word_tag_text");
+                    jqTds[5].innerHTML = '<input id="word_tag_text_input" style="width:100%;" type="text" class="form-control small" value="">';
+                    // 时间戳
+                    jqTds[6].setAttribute("class", "center hidden-phone");
+                    jqTds[6].setAttribute("id", "captured_date");
+                    jqTds[6].innerHTML = '<input id="captured_date_input" style="width:100%;" type="text" class="form-control small" value="">';
+                    // 编辑栏
+                    jqTds[7].setAttribute("class", "operations");
+                    jqTds[7].innerHTML = '<a class="save" data-mode="new" href=""><i class="fa fa-save">保存&emsp;</i></a> <a data-mode="new" class="cancel" href=""><i class="fa fa-undo">取消</i></a>';
                 
-                // ID
-                if(is_new){
-                    jqTds[0].innerHTML = '<input id="id_input" readonly="readonly" style="width:100%;" type="text" class="form-control small" value="' + (max_id).toString() + '">';
+                    // 新建详细信息节点
+                    var new_detail_node = document.createElement("tr");
+                    new_detail_node.setAttribute("id", "details_info_id_" + new_rec_id);
+                    new_detail_node.setAttribute("class", "default_hidden_details_info");
+
+                    var details_info_code = "";
+                    details_info_code += '<td class="details" colspan="8">\
+                            <table cellpadding="5" cellspacing="0" border="0" style="padding-left:20px;">\
+                                <tbody id="record_details_' + new_rec_id + '_tbody">\
+                                    <tr>\
+                                        <td class="is_valid_label">是否有效:</td>\
+                                        <td class="is_valid_options">\
+                                        <select id="is_valid_input_' + new_rec_id + '" >';
+                    // 默认该记录有效
+                    details_info_code += '<option value ="0">否</option>\
+                                          <option value ="1" selected="selected">是</option>';
+                    details_info_code += '</select>\
+                                        </td>\
+                                    </tr>\
+                                    <tr>\
+                                        <td class="">是否已分词:</td>\
+                                        <td class="">\
+                                            <select id="is_segmented_input_' + new_rec_id + '" >';
+                    // 默认未分词
+                    details_info_code += '<option value ="0" selected="selected">否</option>\
+                                            <option value ="1">是</option>';
+                    details_info_code += '</select>\
+                                        </td>\
+                                        <td class="is_tagged_label">是否已标注:</td>\
+                                        <td class="">\
+                                            <select id="is_tagged_input_' + new_rec_id + '" >';
+                    // 默认未标注
+                    details_info_code += '<option value ="0" selected="selected">否</option>';
+                    details_info_code += '<option value ="1">是</option>';
+
+                    var now_date = new Date().Format("yyyy-MM-dd hh:mm:ss");
+                    details_info_code += '</select>\
+                                        </td>\
+                                    </tr>\
+                                    <tr>\
+                                        <td class="">负载大小:</td>\
+                                        <td class=""><input id="payload_size_input_' + new_rec_id + '" size="15" value=""></input></td>\
+                                        <td class="">相关样本:</td>\
+                                        <td class=""><input id="correlation_record_count_input_' + new_rec_id + '" size="15" value=""></input></td>\
+                                    </tr>\
+                                    <tr>\
+                                        <td class="">标注数量:</td>\
+                                        <td class=""><input id="word_tag_count_input_' + new_rec_id + '" size="15" value=""></input></td>\
+                                        <td class="">分词数量:</td>\
+                                        <td class=""><input id="word_segmentation_count_input_' + new_rec_id + '" size="15" value=""></input></td>\
+                                    </tr>\
+                                    <tr>\
+                                        <td class="">创建日期:</td>\
+                                        <td class=""><input id="add_date_input_' + new_rec_id + '" size="18" value="' + now_date + '"></input></td>\
+                                        <td class="">更新日期:</td>\
+                                        <td class=""><input readonly="readonly" id="update_date_input_' + new_rec_id + '" size="18" value="' + now_date + '"></input></td>\
+                                    </tr>\
+                                    <tr>\
+                                        <td class="">分词日期:</td>\
+                                        <td class=""><input readonly="readonly" id="last_segmentation_date_input_' + new_rec_id + '" size="18" value="' + now_date + '"></input></td>\
+                                        <td class="">标注日期:</td>\
+                                        <td class=""><input readonly="readonly" id="last_tag_date_input_' + new_rec_id + '" size="18" value="' + now_date + '"></input></td>\
+                                    </tr>\
+                                    <tr>\
+                                        <td class="">数据包名:</td>\
+                                        <td class=""><input id="pcap_name_input_' + new_rec_id + '" size="30" value=""></input></td>\
+                                        <td class="">样本路径:</td>\
+                                        <td class=""><input id="pcap_path_input_' + new_rec_id + '" size="30" value=""></input></td>\
+                                    </tr>\
+                                    <tr>\
+                                        <td class="">负载二进制:</td>\
+                                        <td class=""><textarea id="payload_binary_input_' + new_rec_id + '" rows="4" class="  form-control">' + "" + '</textarea></td>\
+                                        <td class="">数据备注:</td>\
+                                        <td class=""><textarea id="remarks_input_' + new_rec_id + '" rows="4" class="  form-control">' + "" + '</textarea></td>\
+                                    </tr>\
+                                </tbody>\
+                            </table>\
+                        </td>';
+                    new_detail_node.innerHTML = details_info_code;
+                    jqTds.parent().after(new_detail_node);
                 }else{
-                    jqTds[0].innerHTML = '<input id="id_input" readonly="readonly" style="width:100%;" type="text" class="form-control small" value="' + aData[0] + '">';
-                }
-                // MD5
-                jqTds[1].innerHTML = '<input id="pcap_md5_input" readonly="readonly" style="width:100%;" type="text" class="form-control small" placeholder="自动计算" value="' + aData[1] + '">';
-                // 负载内容
-                jqTds[2].innerHTML = '<input id="payload_ascii_input" style="width:100%;" type="text" class="form-control small" value="' + aData[2] + '">';
-                // 分词结果
-                jqTds[3].innerHTML = '<input id="word_segmentation_text_input" style="width:100%;" type="text" class="form-control small" value="' + aData[3] + '">';
-                // 标注结果
-                jqTds[4].innerHTML = '<input id="word_tag_text_input" style="width:100%;" type="text" class="form-control small" value="' + aData[4] + '">';
-                // 时间戳
-                jqTds[5].innerHTML = '<input id="captured_date_input" style="width:100%;" type="text" class="form-control small" value="' + aData[5] + '">';
-                // 编辑栏
-                if(is_new){
-                    jqTds[6].innerHTML = '<a class="save" data-mode="new" href=""><i class="fa fa-save">保存&emsp;</i></a> <a data-mode="new" class="cancel" href=""><i class="fa fa-undo">取消</i></a>';
-                }else{
-                    jqTds[6].innerHTML = '<a class="save" data-mode="old" href=""><i class="fa fa-save">保存&emsp;</i></a> <a data-mode="old" class="cancel" href=""><i class="fa fa-undo">取消;</i></a>';
+                    var new_rec_id = aData[1];
+                    jqTds[0].innerHTML = aData[0];
+                    jqTds[0].innerHTML = '<i class="fa fa-minus-circle" onclick="hide_or_display_details(this);" style="font-size: 22px;color:#53A0C5;" id="show_record_details_button_' + new_rec_id + '"></i>';
+                    jqTds[0].setAttribute("class", "center  sorting_1");
+
+                    jqTds[1].innerHTML = aData[1];
+                    jqTds[2].innerHTML = '<input id="pcap_md5_input" readonly="readonly" style="width:100%;" type="text" class="form-control small" placeholder="自动计算" value="' + aData[2] + '">';
+                    jqTds[3].innerHTML = '<input id="payload_ascii_input" style="width:100%;" type="text" class="form-control small" value="' + aData[3] + '">';
+                    jqTds[4].innerHTML = '<input id="word_segmentation_text_input" style="width:100%;" type="text" class="form-control small" value="' + aData[4] + '">';
+                    jqTds[5].innerHTML = '<input id="word_tag_text_input" style="width:100%;" type="text" class="form-control small" value="' + aData[5] + '">';
+                    jqTds[6].innerHTML = '<input id="captured_date_input" style="width:100%;" type="text" class="form-control small" value="' + aData[6] + '">';
+                    jqTds[7].innerHTML = '<a class="save" data-mode="old" href=""><i class="fa fa-save">保存&emsp;</i></a> <a data-mode="old" class="cancel" href=""><i class="fa fa-undo">取消;</i></a>';// 新建详细信息节点
+                    
+                    // js手动触发显示详细信息事件
+                    console.log(jqTds[0].children[0]);
+                    jqTds[0].children[0].onclick();
                 }
             }
 
@@ -100,6 +209,25 @@ var EditableTable = function () {
                 oTable.fnUpdate('<a class="edit" href="">Edit</a>', nRow, 4, false);
                 oTable.fnDraw();
             }
+
+            // 获取当前日期并格式化
+            Date.prototype.Format = function(fmt){
+                var options = {
+                    'M+': this.getMonth() + 1,
+                    'd+': this.getDate(),
+                    'h+': this.getHours(),
+                    'm+': this.getMinutes(),
+                    's+': this.getSeconds(),
+                    'q+': Math.floor((this.getMonth() + 3) / 3),
+                    'S': this.getMilliseconds()
+                };
+                if (/(y+)/.test(fmt))
+                    fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+                for (var k in options)
+                    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (options[k]) : (("00" + options[k]).substr(("" + options[k]).length)));
+                        return fmt;
+            }
+
             var oTable = $('#editable-sample').dataTable({
                 "aLengthMenu": [
                     [5, 15, 20, -1],
