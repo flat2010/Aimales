@@ -622,14 +622,14 @@
                            <tbody id="editable_table_body">
                                {% for record in records %}
                                 <tr class="default_display_record_info" >
-                                    <td class="center"><img id="show_record_details_button_{{record.id}}" onclick="hide_or_display_details(this);" src="{% static 'aimales/assets/advanced-datatable/examples/examples_support/details_open.png' %}"></img></td>
-                                    <td class="record_id">{{record.id}}</td>
+                                    <td class="center" style="vertical-align:middle;"><img id="show_record_details_button_{{record.id}}" onclick="hide_or_display_details(this);" src="{% static 'aimales/assets/advanced-datatable/examples/examples_support/details_open.png' %}"></img></td>
+                                    <td class="record_id" style="vertical-align:middle;">{{record.id}}</td>
                                     <td class="hidden-phone" id="pcap_md5">{{record.pcap_md5}}</td>
                                     <td class="hidden-phone" id="payload_ascii">{{record.payload_ascii}}</td>
                                     <td class="center hidden-phone" id="word_segmentation_text">{{record.word_segmentation_text}}</td>
                                     <td class="center hidden-phone" id="word_tag_text">{{record.word_tag_text}}</td>
                                     <td class="center hidden-phone" id="captured_date">{{record.captured_date|date:"Y-m-d H:i:s"}}</td>
-                                    <td class="operations">
+                                    <td class="operations" style="vertical-align:middle;">
                                     <a class="edit" href="javascript:;"><i class="fa fa-pencil-square-o">编辑&emsp;</i></a>
                                     <a class="delete" href="javascript:;"><i class="fa fa-times-circle">删除</i></a>
                                     </td>
@@ -783,6 +783,7 @@
             });
 
             function hide_or_display_details(details_button, edit_flag=false){
+              //console.log(edit_flag);
                 // edit_flag判断是编辑还是只是展示详细信息页面
                 var record_id = $(details_button).attr("id");
                 record_id = record_id.split("_").slice(-1)[0];
@@ -803,19 +804,22 @@
                     var target_node_index = [].indexOf.call(tbody.children, target_node);
                     if(-1 != target_node_index){
                         var new_detail_tr_node = tbody.insertRow(target_node_index + 1);
-                        new_detail_tr_node.innerHTML = generate_details_info_template(record_id);
+                        var detail_infos = generate_details_info_template(record_id);
+                        // 若只是显示详细信息，需要设置readonly模式
+                        if(!edit_flag){
+                          detail_infos = detail_infos.replace(/<input id=/g, '<input readonly="readonly" id=');
+                        }
+                        new_detail_tr_node.innerHTML = detail_infos;
                         new_detail_tr_node.setAttribute("id", "details_info_id_" + record_id);
                         new_detail_tr_node.setAttribute("class", "default_hidden_details_info");
                         is_displayed = true;
                     }
                 }
 
-                // 若只是显示详细信息，需要设置readonly模式
-
                 if(is_displayed){
                     var new_button = document.createElement("i");
                     new_button.setAttribute("class", "fa fa-minus-circle");
-                    new_button.setAttribute("onclick", "hide_or_display_details(this);");
+                    new_button.setAttribute("onclick", "hide_or_display_details(this, false);");
                     new_button.setAttribute("style", "font-size: 22px;color:#53A0C5;");
                     new_button.setAttribute("id", "show_record_details_button_" + record_id);
                     new_button.setAttribute("onclick", "hide_or_display_details(this);");
@@ -823,7 +827,7 @@
                 }else{
                     var new_button = document.createElement("img");
                     new_button.setAttribute("src", "/static/aimales/assets/advanced-datatable/examples/examples_support/details_open.png");
-                    new_button.setAttribute("onclick", "hide_or_display_details(this);");
+                    new_button.setAttribute("onclick", "hide_or_display_details(this, false);");
                     new_button.setAttribute("id", "show_record_details_button_" + record_id);
                     details_button.parentNode.replaceChild(new_button, details_button);
                 }

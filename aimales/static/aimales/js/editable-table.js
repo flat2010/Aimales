@@ -34,7 +34,7 @@ var EditableTable = function () {
                     max_id = parseInt($(this).text());
                 }
             });*/
-            max_id = parseInt($("table tr:last-child td:nth-child(1)").innerText);
+            max_id = parseInt($("table tr:last-child td:nth-child(2)")[0].innerText);
             max_id += 1;
 
             
@@ -55,11 +55,13 @@ var EditableTable = function () {
                 if(is_new){
                     var new_rec_id = (max_id).toString();
                     // 展开详细信息的按钮
-                    jqTds[0].innerHTML = '<i class="fa fa-minus-circle" onclick="hide_or_display_details(this);" style="font-size: 22px;color:#53A0C5;" id="show_record_details_button_' + new_rec_id + '"></i>';
+                    jqTds[0].innerHTML = '<i class="fa fa-minus-circle" onclick="hide_or_display_details(this, true);" style="font-size: 22px;color:#53A0C5;" id="show_record_details_button_' + new_rec_id + '"></i>';
                     jqTds[0].setAttribute("class", "center  sorting_1");
+                    jqTds[0].setAttribute("style", "vertical-align:middle");
                     // ID
                     jqTds[1].setAttribute("class", "record_id");
                     jqTds[1].innerHTML = new_rec_id;
+                    jqTds[1].setAttribute("style", "vertical-align:middle");
                     // MD5
                     jqTds[2].setAttribute("class", "hidden-phone");
                     jqTds[2].setAttribute("id", "pcap_md5");
@@ -83,7 +85,8 @@ var EditableTable = function () {
                     // 编辑栏
                     jqTds[7].setAttribute("class", "operations");
                     jqTds[7].innerHTML = '<a class="save" data-mode="new" href=""><i class="fa fa-save">保存&emsp;</i></a> <a data-mode="new" class="cancel" href=""><i class="fa fa-undo">取消</i></a>';
-                
+                    jqTds[7].setAttribute("style", "vertical-align:middle");
+
                     // 新建详细信息节点
                     var new_detail_node = document.createElement("tr");
                     new_detail_node.setAttribute("id", "details_info_id_" + new_rec_id);
@@ -167,7 +170,7 @@ var EditableTable = function () {
                 }else{
                     var new_rec_id = aData[1];
                     jqTds[0].innerHTML = aData[0];
-                    jqTds[0].innerHTML = '<i class="fa fa-minus-circle" onclick="hide_or_display_details(this);" style="font-size: 22px;color:#53A0C5;" id="show_record_details_button_' + new_rec_id + '"></i>';
+                    jqTds[0].innerHTML = '<i class="fa fa-minus-circle" onclick="hide_or_display_details(this, true);" style="font-size: 22px;color:#53A0C5;" id="show_record_details_button_' + new_rec_id + '"></i>';
                     jqTds[0].setAttribute("class", "center  sorting_1");
 
                     jqTds[1].innerHTML = aData[1];
@@ -179,7 +182,6 @@ var EditableTable = function () {
                     jqTds[7].innerHTML = '<a class="save" data-mode="old" href=""><i class="fa fa-save">保存&emsp;</i></a> <a data-mode="old" class="cancel" href=""><i class="fa fa-undo">取消;</i></a>';// 新建详细信息节点
                     
                     // js手动触发显示详细信息事件
-                    console.log(jqTds[0].children[0]);
                     jqTds[0].children[0].onclick();
                 }
             }
@@ -200,7 +202,7 @@ var EditableTable = function () {
             }
 
             function cancelEditRow(oTable, nRow) {
-                console.log("cancel saveRow...");
+                //console.log("cancel saveRow...");
                 var jqInputs = $('input', nRow);
                 oTable.fnUpdate(jqInputs[0].value, nRow, 0, false);
                 oTable.fnUpdate(jqInputs[1].value, nRow, 1, false);
@@ -258,7 +260,7 @@ var EditableTable = function () {
                     alert("请完成正在编辑的记录！");
                     return false;
                 }
-                console.log("call 新增数据...");
+                //console.log("call 新增数据...");
                 e.preventDefault();
                 var aiNew = oTable.fnAddData(['', '', '', '', '', '', '<a class="save" href=""><i class="fa fa-save">保存&emsp;</i></a> <a class="cancel" href=""><i class="fa fa-undo">取消;</i></a>']);
                 var nRow = oTable.fnGetNodes(aiNew[0]);
@@ -267,7 +269,7 @@ var EditableTable = function () {
             });
 
             $('#editable-sample a.save').live('click', function (e) {
-                console.log("call a.save...");
+                //console.log("call a.save...");
                 e.preventDefault();
 
                 var is_new = ($(this).attr("data-mode") == "new") ? true : false;
@@ -328,7 +330,7 @@ var EditableTable = function () {
                     data: all_datas["datas"],
                     dataType: "json",
                     complete: function(data, status){
-                        console.log(data);
+                        //console.log(data);
                         if(data["status"] == 'error'){
                             alert(data["reason"]);
                             status = true;
@@ -350,7 +352,7 @@ var EditableTable = function () {
 
             // 删除记录
             $('#editable-sample a.delete').live('click', function (e) {
-                console.log("call a.delete...");
+                //console.log("call a.delete...");
                 e.preventDefault();
                 if (confirm("确定删除此条记录？") == false) {
                     return;
@@ -390,7 +392,7 @@ var EditableTable = function () {
 
             // 取消新增数据记录
             $('#editable-sample a.cancel').live('click', function (e) {
-                console.log("call a.cancel...");
+                //console.log("call a.cancel...");
                 e.preventDefault();
                 var nRow = $(this).parents('tr')[0];
                 if ($(this).attr("data-mode") == "new") {
@@ -404,7 +406,7 @@ var EditableTable = function () {
             
             // 保存编辑结果
             $('#editable-sample a.edit').live('click', function (e) {
-                console.log("call a.edit...");
+                //console.log("call a.edit...");
                 e.preventDefault();
                 var current_row = $(this).parents('tr')[0];
                 var row_data = oTable.fnGetData(current_row);
